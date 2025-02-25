@@ -45,6 +45,7 @@ public class GameController {
      * @param space the space to which the current player should move
      */
     public void moveCurrentPlayerToSpace(@NotNull Space space) {
+        // moves player to space when clicked on; Probably should be replaced later!
         Player currentPlayer = board.getCurrentPlayer();
         
         if (space.getPlayer() == null) {
@@ -54,6 +55,9 @@ public class GameController {
             int nextPlayerNumber = (currentPlayerNumber + 1) % board.getPlayersNumber();
             
             board.setCurrentPlayer(board.getPlayer(nextPlayerNumber));
+            
+            // Increment the counter when a move is made
+            board.setCounter(board.getCounter() + 1);
         }
     }
 

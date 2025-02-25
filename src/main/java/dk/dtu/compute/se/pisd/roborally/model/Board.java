@@ -59,6 +59,8 @@ public class Board extends Subject {
 
     private boolean stepMode;
 
+    private int counter = 0;
+
     public Board(int width, int height, @NotNull String boardName) {
         this.boardName = boardName;
         this.width = width;
@@ -206,13 +208,20 @@ public class Board extends Subject {
     }
 
     public String getStatusMessage() {
-        // this is actually a view aspect, but for making assignment V1 easy for
-        // the students, this method gives a string representation of the current
-        // status of the game
-
-        // TODO V1: add the move count to the status message
+        // Return both the current player name and the move counter
         // TODO V2: changed the status so that it shows the phase, the current player, and the current register
-        return "Player = " + getCurrentPlayer().getName();
+        return "Player = " + getCurrentPlayer().getName() + ", Moves = " + getCounter();
+    }
+
+    public int getCounter() {
+        return counter;
+    }
+
+    public void setCounter(int counter) {
+        if (this.counter != counter) {
+            this.counter = counter;
+            notifyChange();
+        }
     }
 
 }
