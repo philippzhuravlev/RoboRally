@@ -91,10 +91,23 @@ public class Player extends Subject {
         }
     }
 
+    /**
+     * Gets the space occupied by the player.
+     *
+     * @return the space occupied by the player
+     */
     public Space getSpace() {
         return space;
     }
 
+    /**
+     * Sets the space occupied by the player.
+     * If the new space is different from the current space and belongs to the same board,
+     * the player is moved to the new space, and the old space is cleared.
+     * Observers are notified of the change.
+     *
+     * @param space the new space to be occupied by the player
+     */
     public void setSpace(Space space) {
         Space oldSpace = this.space;
         if (space != oldSpace &&

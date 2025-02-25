@@ -28,4 +28,4 @@ replay_pid*
 .vscode/
 
 # test files
-.target/
+target/

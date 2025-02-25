@@ -102,6 +102,11 @@ public class Board extends Subject {
         }
     }
 
+    /**
+     * Gets the number of players on the board.
+     *
+     * @return the number of players
+     */
     public int getPlayersNumber() {
         return players.size();
     }
@@ -121,10 +126,22 @@ public class Board extends Subject {
         }
     }
 
+    /**
+     * Gets the current player on the board.
+     *
+     * @return the current player
+     */
     public Player getCurrentPlayer() {
         return current;
     }
 
+    /**
+     * Sets the current player on the board.
+     * If the player is different from the current player and is part of the players list,
+     * the current player is updated and observers are notified of the change.
+     *
+     * @param player the player to set as the current player
+     */
     public void setCurrentPlayer(Player player) {
         if (player != this.current && players.contains(player)) {
             this.current = player;
@@ -207,9 +224,16 @@ public class Board extends Subject {
         return getSpace(x, y);
     }
 
+    /**
+     * Returns the status message of the board.
+     * The status message includes the current phase, the current player's name, and the move counter.
+     *
+     * @return the status message of the board
+     */
     public String getStatusMessage() {
-        // Return both the current player name and the move counter
+        // TODO V1: add the move count to the status message
         // TODO V2: changed the status so that it shows the phase, the current player, and the current register
+        // Return both the current player name and the move counter
         return "Player = " + getCurrentPlayer().getName() + ", Moves = " + getCounter();
     }
 
