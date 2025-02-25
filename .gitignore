@@ -23,5 +23,9 @@
 hs_err_pid*
 replay_pid*
 
-# IntelliJ settings
+# IDE settings
 .idea/
+.vscode/
+
+# test files
+.target/
