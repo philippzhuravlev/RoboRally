@@ -38,10 +38,12 @@ import java.util.List;
 import java.util.Optional;
 
 /**
- * ...
- *
- * @author Ekkart Kindler, ekki@dtu.dk
- *
+ * This class is responsible for managing the application logic of the
+ * RoboRally game, a la the MVC pattern. It also uses the Observer interface
+ * to receive updates from observed subjects.
+ * The application logic includes the reaction of new games, saving and loading,
+ * stopping the current game, and exiting the application.
+ * @see Observer
  */
 public class AppController implements Observer {
 

@@ -22,10 +22,9 @@
 package dk.dtu.compute.se.pisd.roborally.model;
 
 /**
- * ...
- *
- * @author Ekkart Kindler, ekki@dtu.dk
- *
+ * Represents the four possible headings of a robot as directionals,
+ * i.e. south, west, north, and east. The next() and prev() methods
+ * are used to determine the next or previous heading, respectively.
  */
 public enum Heading {
 

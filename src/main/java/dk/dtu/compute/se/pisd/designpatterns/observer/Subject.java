@@ -46,7 +46,7 @@ public abstract class Subject {
 	// would be garbage (if not for these references)!
 
 	/**
-	 * This methods allows an observer to register with the subject
+	 * These methods allow an observer to register with the subject
 	 * for update notifications when the subject changes.
 	 * 
 	 * @param observer the observer who registers
@@ -56,7 +56,7 @@ public abstract class Subject {
 	}
 	
 	/**
-	 * This methods allows an observer to unregister from the subject
+	 * These methods allow an observer to unregister from the subject
 	 * again.
 	 * 
 	 * @param observer the observer who unregisters

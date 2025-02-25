@@ -25,10 +25,8 @@ import dk.dtu.compute.se.pisd.designpatterns.observer.Subject;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * ...
- *
- * @author Ekkart Kindler, ekki@dtu.dk
- *
+ * Represents a command card in the game. A command card inputs a command
+ * It extends the Subject class for observer pattern implementation.
  */
 public class CommandCard extends Subject {
 

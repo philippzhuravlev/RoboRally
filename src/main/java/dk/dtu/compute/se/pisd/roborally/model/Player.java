@@ -27,10 +27,9 @@ import org.jetbrains.annotations.NotNull;
 import static dk.dtu.compute.se.pisd.roborally.model.Heading.SOUTH;
 
 /**
- * ...
- *
- * @author Ekkart Kindler, ekki@dtu.dk
- *
+ * The player class extends the Subject class to allow observers to be notified of changes.
+ * Each player has a name, color, position on the board, and a heading direction.
+ * Players also have a program and a set of cards for the game.
  */
 public class Player extends Subject {
 

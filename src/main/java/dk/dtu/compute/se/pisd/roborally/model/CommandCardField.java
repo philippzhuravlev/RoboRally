@@ -24,10 +24,9 @@ package dk.dtu.compute.se.pisd.roborally.model;
 import dk.dtu.compute.se.pisd.designpatterns.observer.Subject;
 
 /**
- * ...
- *
- * @author Ekkart Kindler, ekki@dtu.dk
- *
+ * Represents a field for a command card of a player, extending the Subject class
+ * for observer pattern implementation. The field can be visible
+ * or not, and it can contain a command card. It has getters and setters,
  */
 public class CommandCardField extends Subject {
 

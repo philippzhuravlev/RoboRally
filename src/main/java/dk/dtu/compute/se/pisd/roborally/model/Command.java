@@ -22,10 +22,8 @@
 package dk.dtu.compute.se.pisd.roborally.model;
 
 /**
- * ...
- *
- * @author Ekkart Kindler, ekki@dtu.dk
- *
+ * Represents the commands that a player can give to a robot as
+ * an enum, namely forward, right, left, and fast-forward.
  */
 public enum Command {
 
