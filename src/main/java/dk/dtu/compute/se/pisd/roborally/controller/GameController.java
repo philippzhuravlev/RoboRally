@@ -55,18 +55,18 @@ public class GameController {
         //     message needs to be implemented at another place)
 
         // moves player to space when clicked on; Probably should be replaced later!
-        Player currentPlayer = board.getCurrentPlayer();
+        Player currentPlayer = board.getCurrentPlayer(); // gets current space of a specific player
         
-        if (space.getPlayer() == null) {
-            currentPlayer.setSpace(space);
+        if (space.getPlayer() == null) { // if getplayer returns null the space does not contain a player
+            currentPlayer.setSpace(space); // and if empty we set current player at this space
             
-            int currentPlayerNumber = board.getPlayerNumber(currentPlayer);
-            int nextPlayerNumber = (currentPlayerNumber + 1) % board.getPlayersNumber();
+            int currentPlayerNumber = board.getPlayerNumber(currentPlayer); //get current Player number
+            int nextPlayerNumber = (currentPlayerNumber + 1) % board.getPlayersNumber(); // move on to the next player
             
-            board.setCurrentPlayer(board.getPlayer(nextPlayerNumber));
+            board.setCurrentPlayer(board.getPlayer(nextPlayerNumber)); // set current player as the "next player"
             
-            // Increment the counter when a move is made
-            board.setCounter(board.getCounter() + 1);
+
+            board.setCounter(board.getCounter() + 1); // Increment the counter when a move is made 
         }
     }
 
