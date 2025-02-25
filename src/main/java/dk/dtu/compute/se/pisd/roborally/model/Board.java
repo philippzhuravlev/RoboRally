@@ -231,7 +231,7 @@ public class Board extends Subject {
      * @return the status message of the board
      */
     public String getStatusMessage() {
-        // TODO V1: add the move count to the status message
+        // TODO V1: add the move count to the status message -- done
         // TODO V2: changed the status so that it shows the phase, the current player, and the current register
         // Return both the current player name and the move counter
         return "Player = " + getCurrentPlayer().getName() + ", Moves = " + getCounter();

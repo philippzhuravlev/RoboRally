@@ -52,7 +52,7 @@ public class GameController {
         //     following the current player
         //   - the counter of moves in the game should be increased by one
         //     if and when the player is moved (the counter and the status line
-        //     message needs to be implemented at another place)
+        //     message needs to be implemented at another place) -- done
 
         // moves player to space when clicked on; Probably should be replaced later!
         Player currentPlayer = board.getCurrentPlayer(); // gets current space of a specific player
@@ -66,7 +66,7 @@ public class GameController {
             board.setCurrentPlayer(board.getPlayer(nextPlayerNumber)); // set current player as the "next player"
             
 
-            board.setCounter(board.getCounter() + 1); // Increment the counter when a move is made 
+            board.setCounter(board.getCounter() + 1); // Increment the counter when a move is made .
         }
     }
 
