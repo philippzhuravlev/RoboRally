@@ -54,48 +54,48 @@ public class BoardFactory {
     public Board createBoard(String name) {
         Board board;
         if (name == null) {
-            board = new Board(8,8, "<none>");
+            board = new Board(8,8, DEFAULT_NAME);
         } else {
             board = new Board(8,8, name);
+            
+            if (name.equals(SIMPLE_BOARD_NAME)) {
+                // Simple board with just two spaces with walls and conveyors
+                Space space = board.getSpace(0,0);
+                space.getWalls().add(Heading.SOUTH);
+                ConveyorBelt action = new ConveyorBelt();
+                action.setHeading(Heading.WEST);
+                space.getActions().add(action);
+
+                space = board.getSpace(1,0);
+                space.getWalls().add(Heading.NORTH);
+                action = new ConveyorBelt();
+                action.setHeading(Heading.WEST);
+                space.getActions().add(action);
+            } else if (name.equals(ADVANCED_BOARD_NAME)) {
+                // Advanced board with more complex layout
+                Space space = board.getSpace(1,1);
+                space.getWalls().add(Heading.WEST);
+                ConveyorBelt action = new ConveyorBelt();
+                action.setHeading(Heading.NORTH);
+                space.getActions().add(action);
+
+                space = board.getSpace(5,5);
+                space.getWalls().add(Heading.SOUTH);
+                action = new ConveyorBelt();
+                action.setHeading(Heading.WEST);
+                space.getActions().add(action);
+
+                space = board.getSpace(6,5);
+                action = new ConveyorBelt();
+                action.setHeading(Heading.WEST);
+                space.getActions().add(action);
+            }
         }
-
-        // add some walls, actions and checkpoints to some spaces
-        Space space = board.getSpace(0,0);
-        space.getWalls().add(Heading.SOUTH);
-        ConveyorBelt action  = new ConveyorBelt();
-        action.setHeading(Heading.WEST);
-        space.getActions().add(action);
-
-        space = board.getSpace(1,0);
-        space.getWalls().add(Heading.NORTH);
-        action  = new ConveyorBelt();
-        action.setHeading(Heading.WEST);
-        space.getActions().add(action);
-
-        space = board.getSpace(1,1);
-        space.getWalls().add(Heading.WEST);
-        action  = new ConveyorBelt();
-        action.setHeading(Heading.NORTH);
-        space.getActions().add(action);
-
-        space = board.getSpace(5,5);
-        space.getWalls().add(Heading.SOUTH);
-        action  = new ConveyorBelt();
-        action.setHeading(Heading.WEST);
-        space.getActions().add(action);
-
-        space = board.getSpace(6,5);
-        action  = new ConveyorBelt();
-        action.setHeading(Heading.WEST);
-        space.getActions().add(action);
-
         return board;
     }
 
     /**
-     * Returns a list of all available board names that can be used to create boards.
-     * The list is unmodifiable to prevent changes to the available board names.
-     *
+     * returns list of board names in the form of a list of string 
      * @return an unmodifiable list of available board names
      */
     public List<String> getAvailableBoardNames() {
