@@ -3,6 +3,7 @@ package dk.dtu.compute.se.pisd.roborally.controller;
 import dk.dtu.compute.se.pisd.roborally.model.Board;
 import dk.dtu.compute.se.pisd.roborally.model.Heading;
 import dk.dtu.compute.se.pisd.roborally.model.Space;
+import java.util.List;
 
 /**
  * A factory for creating boards. The factory itself is implemented as a singleton.
@@ -11,6 +12,13 @@ import dk.dtu.compute.se.pisd.roborally.model.Space;
  */
 // XXX A3: might be used for creating a first slightly more interesting board.
 public class BoardFactory {
+
+    // BOARD NAMES
+    String DEFAULT_NAME = "<none>";
+    String SIMPLE_BOARD_NAME = "simple";
+    String ADVANCED_BOARD_NAME = "advanced";
+    List<String> boardNames = List.of(SIMPLE_BOARD_NAME, ADVANCED_BOARD_NAME); // We'll use this shortcut from the slides
+
 
     /**
      * The single instance of this class, which is lazily instantiated on demand.
@@ -82,6 +90,16 @@ public class BoardFactory {
         space.getActions().add(action);
 
         return board;
+    }
+
+    /**
+     * Returns a list of all available board names that can be used to create boards.
+     * The list is unmodifiable to prevent changes to the available board names.
+     *
+     * @return an unmodifiable list of available board names
+     */
+    public List<String> getAvailableBoardNames() {
+        return boardNames;
     }
 
 }
