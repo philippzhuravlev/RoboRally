@@ -14,10 +14,10 @@ import java.util.List;
 public class BoardFactory {
 
     // BOARD NAMES
-    String DEFAULT_NAME = "<none>";
-    String SIMPLE_BOARD_NAME = "simple";
-    String ADVANCED_BOARD_NAME = "advanced";
-    List<String> boardNames = List.of(SIMPLE_BOARD_NAME, ADVANCED_BOARD_NAME); // We'll use this shortcut from the slides
+    static String DEFAULT_NAME = "<none>";
+    static String SIMPLE_BOARD_NAME = "simple";
+    static String ADVANCED_BOARD_NAME = "advanced";
+    static List<String> boardNames = List.of(SIMPLE_BOARD_NAME, ADVANCED_BOARD_NAME); // We'll use this shortcut from the slides
 
 
     /**
@@ -59,7 +59,10 @@ public class BoardFactory {
             board = new Board(8,8, name);
             
             if (name.equals(SIMPLE_BOARD_NAME)) {
-                // Simple board with just two spaces with walls and conveyors
+                // No obstacles for now
+            } else if (name.equals(ADVANCED_BOARD_NAME)) {
+
+                // Obstacles
                 Space space = board.getSpace(0,0);
                 space.getWalls().add(Heading.SOUTH);
                 ConveyorBelt action = new ConveyorBelt();
@@ -71,11 +74,10 @@ public class BoardFactory {
                 action = new ConveyorBelt();
                 action.setHeading(Heading.WEST);
                 space.getActions().add(action);
-            } else if (name.equals(ADVANCED_BOARD_NAME)) {
-                // Advanced board with more complex layout
-                Space space = board.getSpace(1,1);
+                
+                space = board.getSpace(1,1);
                 space.getWalls().add(Heading.WEST);
-                ConveyorBelt action = new ConveyorBelt();
+                action = new ConveyorBelt();
                 action.setHeading(Heading.NORTH);
                 space.getActions().add(action);
 
@@ -98,7 +100,7 @@ public class BoardFactory {
      * returns list of board names in the form of a list of string 
      * @return an unmodifiable list of available board names
      */
-    public List<String> getAvailableBoardNames() {
+    public static List<String> getAvailableBoardNames() {
         return boardNames;
     }
 
