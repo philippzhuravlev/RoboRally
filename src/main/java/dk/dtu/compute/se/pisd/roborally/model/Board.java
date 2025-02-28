@@ -67,7 +67,7 @@ public class Board extends Subject {
         this.height = height;
         spaces = new Space[width][height];
         for (int x = 0; x < width; x++) {
-            for(int y = 0; y < height; y++) {
+            for (int y = 0; y < height; y++) {
                 Space space = new Space(this, x, y);
                 spaces[x][y] = space;
             }
@@ -137,7 +137,8 @@ public class Board extends Subject {
 
     /**
      * Sets the current player on the board.
-     * If the player is different from the current player and is part of the players list,
+     * If the player is different from the current player and is part of the players
+     * list,
      * the current player is updated and observers are notified of the change.
      *
      * @param player the player to set as the current player
@@ -196,14 +197,15 @@ public class Board extends Subject {
      * (no walls or obstacles in either of the involved spaces); otherwise,
      * null will be returned.
      *
-     * @param space the space for which the neighbour should be computed
+     * @param space   the space for which the neighbour should be computed
      * @param heading the heading of the neighbour
-     * @return the space in the given direction; null if there is no (reachable) neighbour
+     * @return the space in the given direction; null if there is no (reachable)
+     *         neighbour
      */
     public Space getNeighbour(@NotNull Space space, @NotNull Heading heading) {
         // TODO A3: This implementation needs to be adjusted so that walls on
-        //          spaces (and maybe other obstacles) are taken into account
-        //          (see above JavaDoc comment for this method).
+        // spaces (and maybe other obstacles) are taken into account
+        // (see above JavaDoc comment for this method).
         int x = space.x;
         int y = space.y;
         switch (heading) {
@@ -226,13 +228,15 @@ public class Board extends Subject {
 
     /**
      * Returns the status message of the board.
-     * The status message includes the current phase, the current player's name, and the move counter.
+     * The status message includes the current phase, the current player's name, and
+     * the move counter.
      *
      * @return the status message of the board
      */
     public String getStatusMessage() {
         // TODO V1: add the move count to the status message -- done
-        // TODO V2: changed the status so that it shows the phase, the current player, and the current register
+        // TODO V2: changed the status so that it shows the phase, the current player,
+        // and the current register
         // Return both the current player name and the move counter
         return "Player = " + getCurrentPlayer().getName() + ", Moves = " + getCounter();
     }

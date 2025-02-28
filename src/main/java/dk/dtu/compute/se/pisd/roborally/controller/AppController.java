@@ -43,6 +43,7 @@ import java.util.Optional;
  * to receive updates from observed subjects.
  * The application logic includes the reaction of new games, saving and loading,
  * stopping the current game, and exiting the application.
+ * 
  * @see Observer
  */
 public class AppController implements Observer {
@@ -59,12 +60,27 @@ public class AppController implements Observer {
     }
 
     public void newGame() {
-        ChoiceDialog<Integer> dialog = new ChoiceDialog<>(PLAYER_NUMBER_OPTIONS.get(0), PLAYER_NUMBER_OPTIONS);
-        dialog.setTitle("Player number");
-        dialog.setHeaderText("Select number of players");
-        Optional<Integer> result = dialog.showAndWait();
+        ChoiceDialog<String> boardDialog = new ChoiceDialog<>(BoardFactory.SIMPLE_BOARD_NAME,
+                BoardFactory.getAvailableBoardNames());
+        boardDialog.setTitle("Board selection");
+        boardDialog.setHeaderText("Select the board for the new game");
+        Optional<String> boardResult = boardDialog.showAndWait();
 
-        if (result.isPresent()) {
+        if (boardResult.isPresent()) {
+            String selectedBoard = boardResult.get();
+
+            ChoiceDialog<Integer> numberOfPlayersDialog = new ChoiceDialog<>(PLAYER_NUMBER_OPTIONS.get(0),
+                    PLAYER_NUMBER_OPTIONS);
+            numberOfPlayersDialog.setTitle("Player number");
+            numberOfPlayersDialog.setHeaderText("Select number of players");
+            Optional<Integer> result = numberOfPlayersDialog.showAndWait();
+
+            if (!result.isPresent()) {
+                return;
+            }
+
+            int numberOfPlayers = result.get();
+
             if (gameController != null) {
                 // The UI should not allow this, but in case this happens anyway.
                 // give the user the option to save the game or abort this operation!
@@ -73,12 +89,12 @@ public class AppController implements Observer {
                 }
             }
 
-            // XXX the board should eventually be created programmatically or loaded from a file
-            //     here we just create an empty board with the required number of players.
-            Board board = new Board(8,8);
+            // XXX the board should eventually be created programmatically or loaded from a
+            // file
+            // here we just create an empty board with the required number of players.
+            Board board = BoardFactory.getInstance().createBoard(selectedBoard);
             gameController = new GameController(board);
-            int no = result.get();
-            for (int i = 0; i < no; i++) {
+            for (int i = 0; i < numberOfPlayers; i++) {
                 Player player = new Player(board, PLAYER_COLORS.get(i), "Player " + (i + 1));
                 board.addPlayer(player);
                 player.setSpace(board.getSpace(i % board.width, i));
@@ -89,6 +105,7 @@ public class AppController implements Observer {
 
             roboRally.createBoardView(gameController);
         }
+
     }
 
     public void saveGame() {
@@ -147,7 +164,6 @@ public class AppController implements Observer {
     public boolean isGameRunning() {
         return gameController != null;
     }
-
 
     @Override
     public void update(Subject subject) {

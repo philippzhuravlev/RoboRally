@@ -27,8 +27,10 @@ import org.jetbrains.annotations.NotNull;
 import static dk.dtu.compute.se.pisd.roborally.model.Heading.SOUTH;
 
 /**
- * The player class extends the Subject class to allow observers to be notified of changes.
- * Each player has a name, color, position on the board, and a heading direction.
+ * The player class extends the Subject class to allow observers to be notified
+ * of changes.
+ * Each player has a name, color, position on the board, and a heading
+ * direction.
  * Players also have a program and a set of cards for the game.
  */
 public class Player extends Subject {
@@ -43,6 +45,8 @@ public class Player extends Subject {
 
     private Space space;
     private Heading heading = SOUTH;
+
+    private int lastCheckpoint = 0; // i.e. checkpoint 1, then 2, then 3, etc.
 
     private CommandCardField[] program;
     private CommandCardField[] cards;
@@ -102,7 +106,8 @@ public class Player extends Subject {
 
     /**
      * Sets the space occupied by the player.
-     * If the new space is different from the current space and belongs to the same board,
+     * If the new space is different from the current space and belongs to the same
+     * board,
      * the player is moved to the new space, and the old space is cleared.
      * Observers are notified of the change.
      *
@@ -134,6 +139,17 @@ public class Player extends Subject {
             if (space != null) {
                 space.playerChanged();
             }
+        }
+    }
+
+    public int getLastCheckpoint() {
+        return lastCheckpoint;
+    }
+
+    public void setLastCheckpoint(int checkpoint) {
+        if (checkpoint != this.lastCheckpoint) {
+            this.lastCheckpoint = checkpoint;
+            notifyChange();
         }
     }
 

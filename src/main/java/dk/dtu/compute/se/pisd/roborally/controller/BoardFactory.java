@@ -14,10 +14,12 @@ import java.util.List;
 // XXX A3: might be used for creating a first slightly more interesting board.
 public class BoardFactory {
 
+    // BOARD NAMES
     static String DEFAULT_NAME = "<none>";
     static String SIMPLE_BOARD_NAME = "simple";
     static String ADVANCED_BOARD_NAME = "advanced";
-    static List<String> BoardNames = List.of(DEFAULT_NAME, SIMPLE_BOARD_NAME, ADVANCED_BOARD_NAME);
+    static List<String> boardNames = List.of(SIMPLE_BOARD_NAME, ADVANCED_BOARD_NAME); // We'll use this shortcut from
+                                                                                      // the slides
 
     /**
      * The single instance of this class, which is lazily instantiated on demand.
@@ -54,14 +56,15 @@ public class BoardFactory {
     public Board createBoard(String name) {
         Board board;
         if (name == null) {
-            board = new Board(8, 8, "<none>");
+            board = new Board(8, 8, DEFAULT_NAME);
         } else {
             board = new Board(8, 8, name);
 
             if (name.equals(SIMPLE_BOARD_NAME)) {
-                // no obstacles
+                // No obstacles for now
             } else if (name.equals(ADVANCED_BOARD_NAME)) {
-                // add some walls, actions and checkpoints to some spaces
+
+                // Obstacles
                 Space space = board.getSpace(0, 0);
                 space.getWalls().add(Heading.SOUTH);
                 ConveyorBelt action = new ConveyorBelt();
@@ -90,14 +93,22 @@ public class BoardFactory {
                 action = new ConveyorBelt();
                 action.setHeading(Heading.WEST);
                 space.getActions().add(action);
+
+                // Checkpoints
+                space = board.getSpace(4, 0);
+                space.getActions().add(new CheckPoint(1, true));
             }
         }
-
         return board;
     }
 
-    public static List<String> getBoardNames() {
-        return BoardNames;
+    /**
+     * returns list of board names in the form of a list of string
+     * 
+     * @return an unmodifiable list of available board names
+     */
+    public static List<String> getAvailableBoardNames() {
+        return boardNames;
     }
 
 }
