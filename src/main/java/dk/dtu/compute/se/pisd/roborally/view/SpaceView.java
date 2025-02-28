@@ -22,11 +22,19 @@
 package dk.dtu.compute.se.pisd.roborally.view;
 
 import dk.dtu.compute.se.pisd.designpatterns.observer.Subject;
+import dk.dtu.compute.se.pisd.roborally.controller.CheckPoint;
+import dk.dtu.compute.se.pisd.roborally.controller.ConveyorBelt;
+import dk.dtu.compute.se.pisd.roborally.controller.FieldAction;
+import dk.dtu.compute.se.pisd.roborally.model.Heading;
 import dk.dtu.compute.se.pisd.roborally.model.Player;
 import dk.dtu.compute.se.pisd.roborally.model.Space;
+import javafx.scene.canvas.Canvas;
+import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
 import javafx.scene.shape.Polygon;
+import javafx.scene.text.Text;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -90,10 +98,61 @@ public class SpaceView extends StackPane implements ViewObserver {
         if (subject == this.space) {
             this.getChildren().clear();
 
-            // XXX A3: drawing walls and action on the space (could be done
-            //         here); it would be even better if fixed things on
-            //         spaces  are only drawn once (and not on every update)
+            // Draw walls
+            Canvas canvas = new Canvas(SPACE_WIDTH, SPACE_HEIGHT);
+            GraphicsContext gc = canvas.getGraphicsContext2D();
+            gc.setStroke(Color.RED);
+            gc.setLineWidth(2);
+            
+            for (Heading wall : space.getWalls()) {
+                switch (wall) {
+                    case NORTH:
+                        gc.strokeLine(0, 0, SPACE_WIDTH, 0);
+                        break;
+                    case SOUTH:
+                        gc.strokeLine(0, SPACE_HEIGHT, SPACE_WIDTH, SPACE_HEIGHT);
+                        break;
+                    case EAST:
+                        gc.strokeLine(SPACE_WIDTH, 0, SPACE_WIDTH, SPACE_HEIGHT);
+                        break;
+                    case WEST:
+                        gc.strokeLine(0, 0, 0, SPACE_HEIGHT);
+                        break;
+                }
+            }
+            this.getChildren().add(canvas);
 
+            // Draw field actions
+            for (FieldAction action : space.getActions()) {
+                if (action instanceof ConveyorBelt) {
+                    ConveyorBelt belt = (ConveyorBelt) action;
+                    Polygon arrow = new Polygon(
+                        SPACE_WIDTH/2 - 10, SPACE_HEIGHT/2 - 20,
+                        SPACE_WIDTH/2 + 10, SPACE_HEIGHT/2 - 20,
+                        SPACE_WIDTH/2, SPACE_HEIGHT/2 - 5
+                    );
+                    arrow.setFill(Color.LIGHTBLUE);
+                    arrow.setRotate((90 * belt.getHeading().ordinal()) % 360);
+                    this.getChildren().add(arrow);
+                } else if (action instanceof CheckPoint) {
+                    CheckPoint checkPoint = (CheckPoint) action;
+                    
+                    // Create checkpoint circle
+                    Circle circle = new Circle(SPACE_WIDTH/3);
+                    circle.setFill(Color.TRANSPARENT);
+                    circle.setStroke(Color.GREEN);
+                    circle.setStrokeWidth(2);
+                    
+                    // Add checkpoint number
+                    Text number = new Text(String.valueOf(checkPoint.getNumber()));
+                    number.setFill(Color.GREEN);
+                    number.setStyle("-fx-font-size: 16;");
+                    
+                    this.getChildren().addAll(circle, number);
+                }
+            }
+
+            // Draw player
             updatePlayer();
         }
     }
