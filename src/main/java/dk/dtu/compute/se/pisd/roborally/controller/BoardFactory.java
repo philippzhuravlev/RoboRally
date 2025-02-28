@@ -4,6 +4,8 @@ import dk.dtu.compute.se.pisd.roborally.model.Board;
 import dk.dtu.compute.se.pisd.roborally.model.Heading;
 import dk.dtu.compute.se.pisd.roborally.model.Space;
 
+import java.util.List;
+
 /**
  * A factory for creating boards. The factory itself is implemented as a singleton.
  *
@@ -11,6 +13,9 @@ import dk.dtu.compute.se.pisd.roborally.model.Space;
  */
 // XXX A3: might be used for creating a first slightly more interesting board.
 public class BoardFactory {
+
+    public static final String DEFAULT = "Board 1";
+    public static final String ADVANCED = "Board 2";
 
     /**
      * The single instance of this class, which is lazily instantiated on demand.
@@ -44,44 +49,85 @@ public class BoardFactory {
      * @return the new board corresponding to that name
      */
     public Board createBoard(String name) {
-        Board board;
-        if (name == null) {
-            board = new Board(8,8, "<none>");
+        if (ADVANCED.equals(name)) {
+            return advancedBoard();
         } else {
-            board = new Board(8,8, name);
+            return defaultBoard();
         }
+    }
 
-        // add some walls, actions and checkpoints to some spaces
-        Space space = board.getSpace(0,0);
+   public List<String> getAvailableBoards() {
+        return List.of(DEFAULT, ADVANCED);
+    }
+
+    private Board advancedBoard() {
+        Board board = new Board(16, 8, ADVANCED);
+
+        Space space = board.getSpace(0, 0);
         space.getWalls().add(Heading.SOUTH);
-        ConveyorBelt action  = new ConveyorBelt();
+        ConveyorBelt action = new ConveyorBelt();
         action.setHeading(Heading.WEST);
         space.getActions().add(action);
+        // TODO add more space elements
 
-        space = board.getSpace(1,0);
+        space = board.getSpace(1, 0);
         space.getWalls().add(Heading.NORTH);
-        action  = new ConveyorBelt();
+        action = new ConveyorBelt();
         action.setHeading(Heading.WEST);
         space.getActions().add(action);
 
-        space = board.getSpace(1,1);
+        space = board.getSpace(1, 1);
         space.getWalls().add(Heading.WEST);
-        action  = new ConveyorBelt();
+        action = new ConveyorBelt();
         action.setHeading(Heading.NORTH);
         space.getActions().add(action);
 
-        space = board.getSpace(5,5);
+        space = board.getSpace(5, 5);
         space.getWalls().add(Heading.SOUTH);
-        action  = new ConveyorBelt();
+        action = new ConveyorBelt();
         action.setHeading(Heading.WEST);
         space.getActions().add(action);
 
-        space = board.getSpace(6,5);
-        action  = new ConveyorBelt();
+        space = board.getSpace(6, 5);
+        action = new ConveyorBelt();
+        action.setHeading(Heading.WEST);
+        space.getActions().add(action);
+        return board;
+    }
+
+    private Board defaultBoard() {
+        Board board = new Board(8, 8, DEFAULT);
+
+        // add some walls, actions and checkpoints to some spaces
+        Space space = board.getSpace(0, 0);
+        space.getWalls().add(Heading.SOUTH);
+        ConveyorBelt action = new ConveyorBelt();
+        action.setHeading(Heading.WEST);
+        space.getActions().add(action);
+
+        space = board.getSpace(1, 0);
+        space.getWalls().add(Heading.NORTH);
+        action = new ConveyorBelt();
+        action.setHeading(Heading.WEST);
+        space.getActions().add(action);
+
+        space = board.getSpace(1, 1);
+        space.getWalls().add(Heading.WEST);
+        action = new ConveyorBelt();
+        action.setHeading(Heading.NORTH);
+        space.getActions().add(action);
+
+        space = board.getSpace(5, 5);
+        space.getWalls().add(Heading.SOUTH);
+        action = new ConveyorBelt();
+        action.setHeading(Heading.WEST);
+        space.getActions().add(action);
+
+        space = board.getSpace(6, 5);
+        action = new ConveyorBelt();
         action.setHeading(Heading.WEST);
         space.getActions().add(action);
 
         return board;
     }
-
 }
