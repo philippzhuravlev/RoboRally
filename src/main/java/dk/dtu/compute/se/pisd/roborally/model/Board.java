@@ -226,11 +226,11 @@ public class Board extends Subject {
 
             // get a list of walls on the space and check if it is in your movement direction
             if (space.getWalls().contains(heading)) {
-                return null;
+                return getSpace(space.x, space.y);
             }
 
             if (x < 0 || x >= width || y < 0 || y >= height) {  // Check for out-of-bounds
-                return null;
+                return getSpace(space.x, space.y);
             }
         }
         return neighbour; // if checks pass return the space
