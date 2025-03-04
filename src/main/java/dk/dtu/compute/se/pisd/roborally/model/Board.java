@@ -221,7 +221,19 @@ public class Board extends Subject {
                 break;
         }
 
-        return getSpace(x, y);
+        Space neighbour = getSpace(x, y);
+        if (neighbour != null) { // check if there is already a player on the space
+
+            // get a list of walls on the space and check if it is in your movement direction
+            if (space.getWalls().contains(heading)) {
+                return null;
+            }
+
+            if (x < 0 || x >= width || y < 0 || y >= height) {  // Check for out-of-bounds
+                return null;
+            }
+        }
+        return neighbour; // if checks pass return the space
     }
 
     /**
