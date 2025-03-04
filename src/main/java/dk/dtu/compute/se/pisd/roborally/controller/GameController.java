@@ -223,7 +223,9 @@ public class GameController {
     // TODO V2
     public void turnRight(@NotNull Player player) {
 
-    }
+
+}
+
 
     // TODO V2
     public void turnLeft(@NotNull Player player) {
