@@ -59,34 +59,43 @@ public class AppController implements Observer {
     }
 
     public void newGame() {
-        ChoiceDialog<Integer> dialog = new ChoiceDialog<>(PLAYER_NUMBER_OPTIONS.get(0), PLAYER_NUMBER_OPTIONS);
-        dialog.setTitle("Player number");
-        dialog.setHeaderText("Select number of players");
-        Optional<Integer> result = dialog.showAndWait();
+        // SIMPLE OR ADVANCED BOARD DIALOG
+        ChoiceDialog<String> boardDialog = new ChoiceDialog<>(BoardFactory.SIMPLE_BOARD_NAME, BoardFactory.getAvailableBoardNames());
+        boardDialog.setTitle("Board");
+        boardDialog.setHeaderText("Select board");
+        Optional<String> result = boardDialog.showAndWait();
 
         if (result.isPresent()) {
+            String selectedBoard = result.get(); // save selected board
+            
+            // NUMBER OF PLAYERS DIALOG
+            ChoiceDialog<Integer> numberOfPlayersDialog = new ChoiceDialog<>(PLAYER_NUMBER_OPTIONS.get(0), PLAYER_NUMBER_OPTIONS);
+            numberOfPlayersDialog.setTitle("Player number");
+            numberOfPlayersDialog.setHeaderText("Select number of players");
+            Optional<Integer> numberOfPlayersResult = numberOfPlayersDialog.showAndWait();
+
+            int numberOfPlayers = numberOfPlayersResult.get(); // save number of players
+
+            // Check if there is a game running
             if (gameController != null) {
-                // The UI should not allow this, but in case this happens anyway.
-                // give the user the option to save the game or abort this operation!
                 if (!stopGame()) {
                     return;
                 }
             }
 
-            // XXX the board should eventually be created programmatically or loaded from a file
-            //     here we just create an empty board with the required number of players.
-            Board board = new Board(8,8);
+            // Create board using the selected board type
+            Board board = BoardFactory.getInstance().createBoard(selectedBoard);
             gameController = new GameController(board);
-            int no = result.get();
-            for (int i = 0; i < no; i++) {
+
+            // Add players to board
+            for (int i = 0; i < numberOfPlayers; i++) {
                 Player player = new Player(board, PLAYER_COLORS.get(i), "Player " + (i + 1));
                 board.addPlayer(player);
                 player.setSpace(board.getSpace(i % board.width, i));
             }
 
-            // XXX V2
+            // START PROGRAMMING PHASE
             gameController.startProgrammingPhase();
-
             roboRally.createBoardView(gameController);
         }
     }
