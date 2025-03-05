@@ -117,4 +117,77 @@ class GameControllerTest {
         Assertions.assertEquals(Heading.EAST, player.getHeading(), "Player should have turned left to face EAST");
     }
 
+    @Test
+    void testMoveForwardOutOfBounds() {
+        Board board = gameController.board;
+        Player player = board.getCurrentPlayer();
+        player.setSpace(board.getSpace(0, TEST_HEIGHT - 1)); // Place player at the bottom edge
+        player.setHeading(Heading.SOUTH); // Set heading to SOUTH
+
+        gameController.moveForward(player);
+
+        Assertions.assertEquals(board.getSpace(0, TEST_HEIGHT - 1), player.getSpace(), "Player should not move out of bounds");
+    }
+
+    @Test
+    void testFastForwardOutOfBounds() {
+        Board board = gameController.board;
+        Player player = board.getCurrentPlayer();
+        player.setSpace(board.getSpace(0, TEST_HEIGHT - 2)); // Place player near the bottom edge
+        player.setHeading(Heading.SOUTH); // Set heading to SOUTH
+
+        gameController.fastForward(player);
+
+        // The player should move one space forward and stop at (0, TEST_HEIGHT - 1)
+        Assertions.assertEquals(board.getSpace(0, TEST_HEIGHT - 1), player.getSpace(), "Player should move one space forward and stop at the edge");
+    }
+
+    @Test
+    void testUTurn() {
+        Board board = gameController.board;
+        Player player = board.getCurrentPlayer();
+        gameController.turnRight(player);
+        gameController.turnRight(player);
+        Assertions.assertEquals(Heading.NORTH, player.getHeading(), "Player should have turned around to face NORTH");
+    }
+
+    @Test
+    void testBackwards() {
+        Board board = gameController.board;
+        Player player = board.getCurrentPlayer();
+        player.setSpace(board.getSpace(0, 1)); // Set initial position
+        player.setHeading(Heading.SOUTH); // Set heading to SOUTH
+
+        gameController.turnRight(player);
+        gameController.turnRight(player);
+        gameController.moveForward(player);
+
+        Assertions.assertEquals(board.getSpace(0, 0), player.getSpace(), "Player should have moved backwards to (0,0)");
+    }
+
+    @Test
+    void testBackwardsWithWall() {
+        Board board = gameController.board;
+        Player player = board.getCurrentPlayer();
+        player.getSpace().getWalls().add(Heading.NORTH);
+        gameController.turnRight(player);
+        gameController.turnRight(player);
+        gameController.moveForward(player);
+        Assertions.assertEquals(board.getSpace(0, 0), player.getSpace(), "Player should not have moved backwards due to wall");
+    }
+
+    @Test
+    void testBackwardsOutOfBounds() {
+        Board board = gameController.board;
+        Player player = board.getCurrentPlayer();
+        player.setSpace(board.getSpace(0, 0)); // Set initial position
+        player.setHeading(Heading.SOUTH); // Set heading to SOUTH
+
+        gameController.turnRight(player);
+        gameController.turnRight(player);
+        gameController.moveForward(player);
+
+        Assertions.assertEquals(board.getSpace(0, 0), player.getSpace(), "Player should not move out of bounds");
+    }
+
 }

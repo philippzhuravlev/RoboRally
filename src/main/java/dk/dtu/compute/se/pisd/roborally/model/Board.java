@@ -208,32 +208,34 @@ public class Board extends Subject {
         int y = space.y;
         switch (heading) {
             case SOUTH:
-                y = (y + 1) % height;
+                y = y + 1;
                 break;
             case WEST:
-                x = (x + width - 1) % width;
+                x = x - 1;
                 break;
             case NORTH:
-                y = (y + height - 1) % height;
+                y = y - 1;
                 break;
             case EAST:
-                x = (x + 1) % width;
+                x = x + 1;
                 break;
         }
 
-        Space neighbour = getSpace(x, y);
-        // ensures that the neighbour space exists
-        if (neighbour != null) {
-
-            // get a list of walls on the space and check if it is in your movement direction
-            if (space.getWalls().contains(heading)) {
-                return getSpace(space.x, space.y);            }
-
-            // check for out-of-bounds
-            if (x < 0 || x >= width || y < 0 || y >= height) {
-                return getSpace(space.x, space.y);            }
+        // Check for out-of-bounds before applying modulo
+        if (x < 0 || x >= width || y < 0 || y >= height) {
+            return getSpace(space.x, space.y);
         }
-        // if checks pass, return the neighbour space
+
+        // Apply modulo to wrap around
+        x = (x + width) % width;
+        y = (y + height) % height;
+
+        Space neighbour = getSpace(x, y);
+        if (neighbour != null) {
+            if (space.getWalls().contains(heading)) {
+                return getSpace(space.x, space.y);
+            }
+        }
         return neighbour;
     }
 
@@ -245,9 +247,9 @@ public class Board extends Subject {
      */
     public String getStatusMessage() {
         // TODO V1: add the move count to the status message -- done
-        // TODO V2: changed the status so that it shows the phase, the current player, and the current register
-        // Return both the current player name and the move counter
-        return "Player = " + getCurrentPlayer().getName() + ", Moves = " + getCounter();
+        // DOUBTS -- TODO V2: changed the status so that it shows the phase, the current player, and the current register
+        return "Phase = " + getPhase() + ", Player = " + getCurrentPlayer().getName() + ", Moves = " + getCounter() +
+                ", Register = " + getStep();
     }
 
     public int getCounter() {
