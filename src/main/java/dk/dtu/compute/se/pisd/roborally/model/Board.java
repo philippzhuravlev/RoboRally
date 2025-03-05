@@ -192,9 +192,9 @@ public class Board extends Subject {
 
     /**
      * Returns the neighbour of the given space of the board in the given heading.
-     * The neighbour is returned only, if it can be reached from the given space
-     * (no walls or obstacles in either of the involved spaces); otherwise,
-     * null will be returned.
+     * The neighbour is returned only if it can be reached from the given space
+     * (no walls or obstacles in either of the involved spaces) and is within the board's bounds;
+     * otherwise, null will be returned.
      *
      * @param space the space for which the neighbour should be computed
      * @param heading the heading of the neighbour
@@ -222,18 +222,21 @@ public class Board extends Subject {
         }
 
         Space neighbour = getSpace(x, y);
-        if (neighbour != null) { // check if there is already a player on the space
+        // ensures that the neighbour space exists
+        if (neighbour != null) {
 
             // get a list of walls on the space and check if it is in your movement direction
             if (space.getWalls().contains(heading)) {
-                return getSpace(space.x, space.y);
+                return null;
             }
 
-            if (x < 0 || x >= width || y < 0 || y >= height) {  // Check for out-of-bounds
-                return getSpace(space.x, space.y);
+            // check for out-of-bounds
+            if (x < 0 || x >= width || y < 0 || y >= height) {
+                return null;
             }
         }
-        return neighbour; // if checks pass return the space
+        // if checks pass, return the neighbour space
+        return neighbour;
     }
 
     /**

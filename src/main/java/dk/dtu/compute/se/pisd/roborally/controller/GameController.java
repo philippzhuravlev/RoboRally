@@ -210,23 +210,43 @@ public class GameController {
         }
     }
 
-    // TODO V2
+    // TODO V2 -- done
+    /**
+     * Moves the player one space forward in the direction they are currently heading.
+     *
+     * @param player the player to move forward
+     */
     public void moveForward(@NotNull Player player) {
         player.setSpace(board.getNeighbour(player.getSpace(), player.getHeading()));
     }
 
-    // TODO V2
+    // TODO V2 -- done
+    /**
+     * Moves the player two spaces forward in the direction they are currently heading.
+     *
+     * @param player the player to move forward
+     */
     public void fastForward(@NotNull Player player) {
         moveForward(player);
         moveForward(player);
     }
 
-    // TODO V2
+    // TODO V2 -- done
+    /**
+     * Rotates the player 90 degrees to the right.
+     *
+     * @param player the player to rotate
+     */
     public void turnRight(@NotNull Player player) {
         player.setHeading(player.getHeading().next());
     }
 
-    // TODO V2
+    // TODO V2 -- done
+    /**
+     * Rotates the player 90 degrees to the left.
+     *
+     * @param player the player to rotate
+     */
     public void turnLeft(@NotNull Player player) {
         player.setHeading(player.getHeading().prev());
     }
