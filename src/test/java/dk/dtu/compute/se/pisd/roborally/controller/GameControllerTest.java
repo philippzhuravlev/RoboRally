@@ -46,8 +46,7 @@ class GameControllerTest {
         Assertions.assertEquals(player, board.getSpace(0, 4).getPlayer(), "Player " + player.getName() + " should be on Space (0,4)!");
     }
 
-    /*
-        The following tests should be used later for assignment V2
+    // The following tests should be used later for assignment V2
 
     @Test
     void moveCurrentPlayerToSpace() {
@@ -74,8 +73,48 @@ class GameControllerTest {
         Assertions.assertNull(board.getSpace(0, 0).getPlayer(), "Space (0,0) should be empty!");
     }
 
-     */
+    // TODO and there should be more tests added for the different assignments eventually
 
-    // TDOD and there should be more tests added for the different assignments eventually
+    @Test
+    void testMoveForwardWithWall() {
+        Board board = gameController.board;
+        Player player = board.getCurrentPlayer();
+        player.getSpace().getWalls().add(Heading.SOUTH);
+        gameController.moveForward(player);
+        Assertions.assertEquals(board.getSpace(0, 0), player.getSpace(), "Player should not have moved due to wall");
+    }
+
+    @Test
+    void testFastForward() {
+        Board board = gameController.board;
+        Player player = board.getCurrentPlayer();
+        gameController.fastForward(player);
+        Assertions.assertEquals(board.getSpace(0, 2), player.getSpace(), "Player should have moved forward to (0,2)");
+    }
+
+    @Test
+    void testFastForwardWithWall() {
+        Board board = gameController.board;
+        Player player = board.getCurrentPlayer();
+        player.getSpace().getWalls().add(Heading.SOUTH);
+        gameController.fastForward(player);
+        Assertions.assertEquals(board.getSpace(0, 0), player.getSpace(), "Player should not have moved due to wall");
+    }
+
+    @Test
+    void testTurnRight() {
+        Board board = gameController.board;
+        Player player = board.getCurrentPlayer();
+        gameController.turnRight(player);
+        Assertions.assertEquals(Heading.WEST, player.getHeading(), "Player should have turned right to face WEST");
+    }
+
+    @Test
+    void testTurnLeft() {
+        Board board = gameController.board;
+        Player player = board.getCurrentPlayer();
+        gameController.turnLeft(player);
+        Assertions.assertEquals(Heading.EAST, player.getHeading(), "Player should have turned left to face EAST");
+    }
 
 }
