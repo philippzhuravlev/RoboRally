@@ -60,6 +60,17 @@ public class BoardFactory {
             
             if (name.equals(SIMPLE_BOARD_NAME)) {
                 // No obstacles for now
+
+                // Checkpoints
+                Space space = board.getSpace(4,0);
+                space.getActions().add(new CheckPoint(1, false));
+
+                space = board.getSpace(5,0);
+                space.getActions().add(new CheckPoint(2, false));
+                
+                space = board.getSpace(6,0);
+                space.getActions().add(new CheckPoint(2, true));
+
             } else if (name.equals(ADVANCED_BOARD_NAME)) {
 
                 // Obstacles
@@ -95,6 +106,13 @@ public class BoardFactory {
                 // Checkpoints
                 space = board.getSpace(4,0);
                 space.getActions().add(new CheckPoint(1, false));
+
+                space = board.getSpace(5,0);
+                space.getActions().add(new CheckPoint(2, false));
+                
+                space = board.getSpace(6,0);
+                space.getActions().add(new CheckPoint(2, true));
+
             }
         }
         return board;
