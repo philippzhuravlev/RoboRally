@@ -69,7 +69,7 @@ public class BoardFactory {
                 space.getActions().add(new CheckPoint(2, false));
                 
                 space = board.getSpace(6,0);
-                space.getActions().add(new CheckPoint(2, true));
+                space.getActions().add(new CheckPoint(3, true));
 
             } else if (name.equals(ADVANCED_BOARD_NAME)) {
 
@@ -111,7 +111,7 @@ public class BoardFactory {
                 space.getActions().add(new CheckPoint(2, false));
                 
                 space = board.getSpace(6,0);
-                space.getActions().add(new CheckPoint(2, true));
+                space.getActions().add(new CheckPoint(3, true));
 
             }
         }

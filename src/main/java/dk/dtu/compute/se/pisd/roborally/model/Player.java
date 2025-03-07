@@ -44,6 +44,7 @@ public class Player extends Subject {
     private Space space;
     private Heading heading = SOUTH;
 
+    private int checkpointsReached = 0;
     private int lastCheckpoint = 0; // i.e. checkpoint 1, then 2, then 3, etc.
 
     private CommandCardField[] program;
@@ -158,4 +159,18 @@ public class Player extends Subject {
         return cards[i];
     }
 
+    public int getCheckpointsReached() {
+        return checkpointsReached;
+    }
+
+    public void setCheckpointsReached(int i) {
+        if (i != checkpointsReached) {
+            checkpointsReached = i;
+            notifyChange();
+        }
+    }
+
+    public boolean hasReachedCheckpoint(int checkpointNumber) {
+        return this.checkpointsReached >= checkpointNumber;
+    }
 }

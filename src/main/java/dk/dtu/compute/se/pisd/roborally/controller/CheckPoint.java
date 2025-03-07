@@ -1,5 +1,6 @@
 package dk.dtu.compute.se.pisd.roborally.controller;
 
+import dk.dtu.compute.se.pisd.roborally.model.Player;
 import dk.dtu.compute.se.pisd.roborally.model.Space;
 import javafx.application.Platform;
 import javafx.scene.control.Alert;
@@ -22,17 +23,23 @@ public class CheckPoint extends FieldAction {
     @Override
     public boolean doAction(@NotNull GameController gameController, @NotNull Space space) {
         if (space.getPlayer() != null) {
-            // VICTORY DIALOG
-            if (isLast) { // i.e. if true
-                Platform.runLater(() -> { // i.e. run javaFX code
-                    Alert alert = new Alert(Alert.AlertType.INFORMATION); // alert dialog box like in AppController.java
-                    alert.setTitle("Victory!");
-                    alert.setHeaderText("You Won!");
-                    alert.setContentText("Player " + space.getPlayer().getName() + " has emerged victorious!");
-                    alert.showAndWait();
-                });
+            Player player = space.getPlayer();
+            if (number == 1 || player.hasReachedCheckpoint(number - 1)) {
+                if (!player.hasReachedCheckpoint(number)) {
+                    player.setCheckpointsReached(player.getCheckpointsReached() + 1);
+                    // VICTORY DIALOG
+                    if (isLast) { // i.e. if true
+                        Platform.runLater(() -> { // i.e. run javaFX code
+                            Alert alert = new Alert(Alert.AlertType.INFORMATION); // alert dialog box like in AppController.java
+                            alert.setTitle("Victory!");
+                            alert.setHeaderText("You Won!");
+                            alert.setContentText("Player " + player.getName() + " has emerged victorious!");
+                            alert.showAndWait();
+                        });
+                    }
+                }
+                return true;
             }
-            return true;
         }
         return false;
     }

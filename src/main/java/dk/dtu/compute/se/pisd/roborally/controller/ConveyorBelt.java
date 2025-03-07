@@ -21,6 +21,7 @@
  */
 package dk.dtu.compute.se.pisd.roborally.controller;
 
+import dk.dtu.compute.se.pisd.roborally.exceptions.ImpossibleMoveException;
 import dk.dtu.compute.se.pisd.roborally.model.Heading;
 import dk.dtu.compute.se.pisd.roborally.model.Space;
 import org.jetbrains.annotations.NotNull;
@@ -50,10 +51,24 @@ public class ConveyorBelt extends FieldAction {
      */
     @Override
     public boolean doAction(@NotNull GameController gameController, @NotNull Space space) {
-        // TODO A3: needs to be implemented
-        // ...
+        if (space.getPlayer() == null) {
+            return false; // No player on the conveyor belt, nothing happens
+        }
 
-        return false;
+        Heading direction = this.getHeading(); // Get conveyor belt direction
+        Space nextSpace = gameController.board.getNeighbour(space, direction); // Get next space (already checks walls & bounds)
+
+        if (nextSpace != null) {
+            try {
+                gameController.moveToSpace(space.getPlayer(), nextSpace, direction);
+                return true; // Action successful, player moved
+            } catch (ImpossibleMoveException e) {
+                return false; // Movement blocked (wall, out of bounds, etc.)
+            }
+        }
+
+        return false; // No valid space to move into
     }
+
 
 }

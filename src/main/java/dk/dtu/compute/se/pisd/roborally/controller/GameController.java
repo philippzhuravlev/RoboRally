@@ -151,6 +151,20 @@ public class GameController {
         } while (board.getPhase() == Phase.ACTIVATION && !board.isStepMode());
     }
 
+    private void executeFieldActions() {
+        for (int i = 0; i < board.getPlayersNumber(); i++) {
+            Player player = board.getPlayer(i);
+            Space space = player.getSpace();
+
+            if (space != null) {
+                // Iterate over all field actions assigned to this space
+                for (FieldAction action : space.getActions()) {
+                    action.doAction(this, space); // Call doAction() for each field action
+                }
+            }
+        }
+    }
+
     // XXX V2
     private void executeNextStep() {
         Player currentPlayer = board.getCurrentPlayer();
@@ -166,6 +180,9 @@ public class GameController {
                 if (nextPlayerNumber < board.getPlayersNumber()) {
                     board.setCurrentPlayer(board.getPlayer(nextPlayerNumber));
                 } else {
+                    // All players finished their commands → Trigger field actions
+                    executeFieldActions();
+
                     step++;
                     if (step < Player.NO_REGISTERS) {
                         makeProgramFieldsVisible(step);
@@ -247,18 +264,20 @@ public class GameController {
             throw new ImpossibleMoveException(pusher, space, heading); // Blocked by a wall
         }
 
+        // check if the target space is occupied by another player
         Player pushed = space.getPlayer();
         if (pushed != null) {
             Space nextSpace = board.getNeighbour(space, heading);
 
-            // **NEW: Throw exception instead of stopping silently**
+            // Throw exception instead of stopping silently**
             if (nextSpace == null || space.getWalls().contains(heading)) {
                 throw new ImpossibleMoveException(pusher, space, heading); // Can't push, movement fails
             }
 
+
             moveToSpace(pushed, nextSpace, heading); // Recursively move the pushed player
 
-            // **Final check: If the space is still occupied, the push failed**
+            // If the space is still occupied, the push failed**
             if (space.getPlayer() != null) {
                 throw new ImpossibleMoveException(pusher, space, heading);
             }

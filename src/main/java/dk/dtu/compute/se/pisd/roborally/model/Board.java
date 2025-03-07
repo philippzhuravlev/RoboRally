@@ -249,7 +249,7 @@ public class Board extends Subject {
         // TODO V1: add the move count to the status message -- done
         // TODO V2: changed the status so that it shows the phase, the current player, and the current register -- done
         return "Phase = " + getPhase() + ", Player = " + getCurrentPlayer().getName() + ", Moves = " + getCounter() +
-                ", Register = " + getStep();
+                ", Register = " + getStep() + " Checkpoints = " + getCurrentPlayer().getCheckpointsReached();
     }
 
     public int getCounter() {
