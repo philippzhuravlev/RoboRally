@@ -21,6 +21,7 @@
  */
 package dk.dtu.compute.se.pisd.roborally.controller;
 
+import dk.dtu.compute.se.pisd.roborally.exceptions.ImpossibleMoveException;
 import dk.dtu.compute.se.pisd.roborally.model.*;
 import org.jetbrains.annotations.NotNull;
 
@@ -185,6 +186,13 @@ public class GameController {
     }
 
     // XXX V2
+    /**
+     * Executes the given command for the specified player.
+     * Depending on the command, the player will move or rotate accordingly.
+     *
+     * @param player  the player executing the command
+     * @param command the command to be executed
+     */
     private void executeCommand(@NotNull Player player, Command command) {
         if (player != null && player.board == board && command != null) {
             // XXX This is a very simplistic way of dealing with some basic cards and
@@ -205,18 +213,58 @@ public class GameController {
                     this.fastForward(player);
                     break;
                 case U_TURN:
-                    this.turnRight(player);
-                    this.turnRight(player);
+                    this.turnU(player);
                     break;
                 case BACKWARDS:
-                    this.turnRight(player);
-                    this.turnRight(player);
-                    this.moveForward(player);
+                    this.moveBackward(player);
                     break;
                 default:
                     // DO NOTHING (for now)
             }
         }
+    }
+
+    /**
+     * Moves a player to a specified space in the given direction.
+     * If another player is in the target space, they will be pushed.
+     * If movement is not possible, an exception is thrown.
+     *
+     * @param pusher  the player attempting to move
+     * @param space   the target space
+     * @param heading the direction of movement
+     * @throws ImpossibleMoveException if movement is blocked (e.g., by walls or board limits)
+     */
+    void moveToSpace(@NotNull Player pusher, @NotNull Space space, @NotNull Heading heading) throws ImpossibleMoveException {
+        if (space == pusher.getSpace()) {
+            throw new ImpossibleMoveException(pusher, space, heading); // Out of bounds or invalid space
+        }
+
+        // Ensure walls block movement
+        Space currentSpace = pusher.getSpace();
+        Space neighbour = board.getNeighbour(currentSpace, heading);
+
+        if (neighbour == null || currentSpace.getWalls().contains(heading)) {
+            throw new ImpossibleMoveException(pusher, space, heading); // Blocked by a wall
+        }
+
+        Player pushed = space.getPlayer();
+        if (pushed != null) {
+            Space nextSpace = board.getNeighbour(space, heading);
+
+            // **NEW: Throw exception instead of stopping silently**
+            if (nextSpace == null || space.getWalls().contains(heading)) {
+                throw new ImpossibleMoveException(pusher, space, heading); // Can't push, movement fails
+            }
+
+            moveToSpace(pushed, nextSpace, heading); // Recursively move the pushed player
+
+            // **Final check: If the space is still occupied, the push failed**
+            if (space.getPlayer() != null) {
+                throw new ImpossibleMoveException(pusher, space, heading);
+            }
+        }
+
+        pusher.setSpace(space); // Move only if everything succeeded
     }
 
     // TODO V2 -- done
@@ -226,7 +274,43 @@ public class GameController {
      * @param player the player to move forward
      */
     public void moveForward(@NotNull Player player) {
-        player.setSpace(board.getNeighbour(player.getSpace(), player.getHeading()));
+        if (player.board == board) {
+            Space space = player.getSpace();
+            Heading heading = player.getHeading();
+            Space target = board.getNeighbour(space, heading);
+
+            if (target != null) {
+                try {
+                    moveToSpace(player, target, heading); // Now it also pushes other robots
+                    board.setCounter(board.getCounter() + 1); // Increment counter here
+                } catch (ImpossibleMoveException e) {
+                    // Don't do anything if the movement fails
+                }
+            }
+        }
+    }
+
+    /**
+     * Moves the player one space backward (opposite of their current heading).
+     * If movement is blocked, the player remains in place.
+     *
+     * @param player the player to move backward
+     */
+    public void moveBackward(@NotNull Player player) {
+        if (player.board == board) {
+            Space space = player.getSpace();
+            Heading heading = player.getHeading().opposite(); // Move in opposite direction
+            Space target = board.getNeighbour(space, heading);
+
+            if (target != null) {
+                try {
+                    moveToSpace(player, target, heading);
+                    board.setCounter(board.getCounter() + 1); // Increment counter here
+                } catch (ImpossibleMoveException e) {
+                    // Don't do anything if the movement fails
+                }
+            }
+        }
     }
 
     // TODO V2 -- done
@@ -248,6 +332,7 @@ public class GameController {
      */
     public void turnRight(@NotNull Player player) {
         player.setHeading(player.getHeading().next());
+        board.setCounter(board.getCounter() + 1); // Increment counter here
     }
 
     // TODO V2 -- done
@@ -258,6 +343,18 @@ public class GameController {
      */
     public void turnLeft(@NotNull Player player) {
         player.setHeading(player.getHeading().prev());
+        board.setCounter(board.getCounter() + 1); // Increment counter here
+    }
+
+    /**
+     * Rotates the player 180 degrees to face the opposite direction.
+     * This is equivalent to making a U-turn.
+     *
+     * @param player the player to rotate
+     */
+    public void turnU(@NotNull Player player) {
+        player.setHeading(player.getHeading().opposite());
+        board.setCounter(board.getCounter() + 1); // Increment counter here
     }
 
     public boolean moveCards(@NotNull CommandCardField source, @NotNull CommandCardField target) {

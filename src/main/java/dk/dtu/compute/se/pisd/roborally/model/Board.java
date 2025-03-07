@@ -232,7 +232,7 @@ public class Board extends Subject {
 
         Space neighbour = getSpace(x, y);
         if (neighbour != null) {
-            if (space.getWalls().contains(heading)) {
+            if (space.getWalls().contains(heading) || neighbour.getWalls().contains(heading.opposite())) {
                 return getSpace(space.x, space.y);
             }
         }
@@ -247,7 +247,7 @@ public class Board extends Subject {
      */
     public String getStatusMessage() {
         // TODO V1: add the move count to the status message -- done
-        // DOUBTS -- TODO V2: changed the status so that it shows the phase, the current player, and the current register
+        // TODO V2: changed the status so that it shows the phase, the current player, and the current register -- done
         return "Phase = " + getPhase() + ", Player = " + getCurrentPlayer().getName() + ", Moves = " + getCounter() +
                 ", Register = " + getStep();
     }

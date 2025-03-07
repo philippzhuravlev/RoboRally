@@ -170,9 +170,7 @@ class GameControllerTest {
         Board board = gameController.board;
         Player player = board.getCurrentPlayer();
         player.getSpace().getWalls().add(Heading.NORTH);
-        gameController.turnRight(player);
-        gameController.turnRight(player);
-        gameController.moveForward(player);
+        gameController.moveBackward(player);
         Assertions.assertEquals(board.getSpace(0, 0), player.getSpace(), "Player should not have moved backwards due to wall");
     }
 
@@ -183,9 +181,7 @@ class GameControllerTest {
         player.setSpace(board.getSpace(0, 0)); // Set initial position
         player.setHeading(Heading.SOUTH); // Set heading to SOUTH
 
-        gameController.turnRight(player);
-        gameController.turnRight(player);
-        gameController.moveForward(player);
+        gameController.moveBackward(player);
 
         Assertions.assertEquals(board.getSpace(0, 0), player.getSpace(), "Player should not move out of bounds");
     }
