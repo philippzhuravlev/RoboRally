@@ -151,6 +151,15 @@ public class GameController {
         } while (board.getPhase() == Phase.ACTIVATION && !board.isStepMode());
     }
 
+    /**
+     * Executes all field actions for the current game state.
+     *
+     * <p>This method processes any field actions (such as conveyor belts and checkpoints)
+     * for all players currently on the board. It iterates over all players, retrieves their
+     * current space, and triggers any field actions assigned to that space.</p>
+     *
+     * <p>Each field action is executed by calling its `doAction()` method.</p>
+     */
     private void executeFieldActions() {
         for (int i = 0; i < board.getPlayersNumber(); i++) {
             Player player = board.getPlayer(i);
@@ -159,13 +168,23 @@ public class GameController {
             if (space != null) {
                 // Iterate over all field actions assigned to this space
                 for (FieldAction action : space.getActions()) {
-                    action.doAction(this, space); // Call doAction() for each field action
+                    action.doAction(this, space);
                 }
             }
         }
     }
 
     // XXX V2
+    /**
+     * Executes the next step in the activation phase of the game.
+     *
+     * <p>This method processes the next command card for the current player.
+     * After executing the command, it moves to the next player. When all players
+     * have executed their commands for the current step, field actions (such as conveyor belts)
+     * are triggered. The game then progresses to the next step or restarts the programming phase.</p>
+     *
+     * <p>If the game reaches the last step, the programming phase starts again.</p>
+     */
     private void executeNextStep() {
         Player currentPlayer = board.getCurrentPlayer();
         if (board.getPhase() == Phase.ACTIVATION && currentPlayer != null) {
@@ -180,7 +199,7 @@ public class GameController {
                 if (nextPlayerNumber < board.getPlayersNumber()) {
                     board.setCurrentPlayer(board.getPlayer(nextPlayerNumber));
                 } else {
-                    // All players finished their commands → Trigger field actions
+                    // all players have executed their commands, so execute field actions
                     executeFieldActions();
 
                     step++;
@@ -243,13 +262,17 @@ public class GameController {
 
     /**
      * Moves a player to a specified space in the given direction.
-     * If another player is in the target space, they will be pushed.
-     * If movement is not possible, an exception is thrown.
+     *
+     * <p>If another player is already in the target space, they will be pushed recursively
+     * until a free space is found or movement becomes impossible (e.g., due to a wall or board limits).</p>
+     *
+     * <p>If movement is not possible (e.g., the path is blocked by a wall or the board's edge),
+     * an {@code ImpossibleMoveException} is thrown.</p>
      *
      * @param pusher  the player attempting to move
      * @param space   the target space
      * @param heading the direction of movement
-     * @throws ImpossibleMoveException if movement is blocked (e.g., by walls or board limits)
+     * @throws ImpossibleMoveException if movement is blocked (e.g., by walls, board limits, or no free space to push a player)
      */
     void moveToSpace(@NotNull Player pusher, @NotNull Space space, @NotNull Heading heading) throws ImpossibleMoveException {
         if (space == pusher.getSpace()) {
@@ -290,6 +313,11 @@ public class GameController {
     /**
      * Moves the player one space forward in the direction they are currently heading.
      *
+     * <p>If another player is already in the target space, they will be pushed recursively
+     * using {@code moveToSpace()}.</p>
+     *
+     * <p>If movement is blocked (e.g., by a wall or the edge of the board), the player remains in place.</p>
+     *
      * @param player the player to move forward
      */
     public void moveForward(@NotNull Player player) {
@@ -311,7 +339,11 @@ public class GameController {
 
     /**
      * Moves the player one space backward (opposite of their current heading).
-     * If movement is blocked, the player remains in place.
+     *
+     * <p>If another player is already in the target space, they will be pushed recursively
+     * using {@code moveToSpace()}.</p>
+     *
+     * <p>If movement is blocked (e.g., by a wall or the edge of the board), the player remains in place.</p>
      *
      * @param player the player to move backward
      */

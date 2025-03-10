@@ -20,6 +20,18 @@ public class CheckPoint extends FieldAction {
         this.isLast = isLast;
     }
 
+    /**
+     * Executes the checkpoint action when a player lands on this space.
+     *
+     * <p>If the player reaches this checkpoint in the correct order (either it's the first checkpoint
+     * or they have reached the previous checkpoint), their checkpoint count is increased.</p>
+     *
+     * <p>If this checkpoint is the final one, a victory message is displayed.</p>
+     *
+     * @param gameController the game controller managing the game
+     * @param space the space where the checkpoint action occurs
+     * @return {@code true} if the checkpoint is successfully reached; {@code false} otherwise
+     */
     @Override
     public boolean doAction(@NotNull GameController gameController, @NotNull Space space) {
         if (space.getPlayer() != null) {

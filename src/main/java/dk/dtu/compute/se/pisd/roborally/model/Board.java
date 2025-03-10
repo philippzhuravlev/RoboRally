@@ -203,7 +203,7 @@ public class Board extends Subject {
     public Space getNeighbour(@NotNull Space space, @NotNull Heading heading) {
         // TODO A3: This implementation needs to be adjusted so that walls on
         //          spaces (and maybe other obstacles) are taken into account
-        //          (see above JavaDoc comment for this method).
+        //          (see above JavaDoc comment for this method) -- done
         int x = space.x;
         int y = space.y;
         switch (heading) {
@@ -240,10 +240,18 @@ public class Board extends Subject {
     }
 
     /**
-     * Returns the status message of the board.
-     * The status message includes the current phase, the current player's name, and the move counter.
+     * Returns the current status message of the board.
      *
-     * @return the status message of the board
+     * <p>The status message includes:</p>
+     * <ul>
+     *     <li>The current game phase</li>
+     *     <li>The name of the current player</li>
+     *     <li>The total number of moves made</li>
+     *     <li>The current program register step</li>
+     *     <li>The number of checkpoints reached by the current player</li>
+     * </ul>
+     *
+     * @return a formatted string representing the current game status
      */
     public String getStatusMessage() {
         // TODO V1: add the move count to the status message -- done

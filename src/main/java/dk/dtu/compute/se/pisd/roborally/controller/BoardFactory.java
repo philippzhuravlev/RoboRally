@@ -119,7 +119,7 @@ public class BoardFactory {
     }
 
     /**
-     * returns list of board names in the form of a list of string 
+     * Returns a list of board names in the form of a list of string
      * @return an unmodifiable list of available board names
      */
     public static List<String> getAvailableBoardNames() {

@@ -47,7 +47,18 @@ public class ConveyorBelt extends FieldAction {
     }
 
     /**
-     * Implementation of the action of a conveyor belt. Needs to be implemented for A3.
+     * Executes the conveyor belt action for the space.
+     *
+     * <p>If a player is on the conveyor belt, they are pushed one space in the
+     * belt's direction, provided there are no obstacles such as walls or the edge
+     * of the board blocking the movement.</p>
+     *
+     * <p>If movement is not possible due to a wall or an out-of-bounds situation,
+     * the player remains in place.</p>
+     *
+     * @param gameController the game controller managing the game logic
+     * @param space the space where the conveyor belt action occurs
+     * @return {@code true} if the player was moved successfully; {@code false} otherwise
      */
     @Override
     public boolean doAction(@NotNull GameController gameController, @NotNull Space space) {
