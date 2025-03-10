@@ -170,6 +170,12 @@ public class Player extends Subject {
         }
     }
 
+    /**
+     * Checks if the player has reached a specific checkpoint.
+     *
+     * @param checkpointNumber the checkpoint number to check
+     * @return {@code true} if the player has reached or surpassed the specified checkpoint, {@code false} otherwise
+     */
     public boolean hasReachedCheckpoint(int checkpointNumber) {
         return this.checkpointsReached >= checkpointNumber;
     }

@@ -287,12 +287,12 @@ public class GameController {
             throw new ImpossibleMoveException(pusher, space, heading); // Blocked by a wall
         }
 
-        // check if the target space is occupied by another player
+        // Check if the target space is occupied by another player
         Player pushed = space.getPlayer();
         if (pushed != null) {
             Space nextSpace = board.getNeighbour(space, heading);
 
-            // Throw exception instead of stopping silently**
+            // Throw exception instead of stopping silently
             if (nextSpace == null || space.getWalls().contains(heading)) {
                 throw new ImpossibleMoveException(pusher, space, heading); // Can't push, movement fails
             }
@@ -328,7 +328,7 @@ public class GameController {
 
             if (target != null) {
                 try {
-                    moveToSpace(player, target, heading); // Now it also pushes other robots
+                    moveToSpace(player, target, heading);
                     board.setCounter(board.getCounter() + 1); // Increment counter here
                 } catch (ImpossibleMoveException e) {
                     // Don't do anything if the movement fails

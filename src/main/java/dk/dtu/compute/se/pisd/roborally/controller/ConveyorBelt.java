@@ -67,7 +67,7 @@ public class ConveyorBelt extends FieldAction {
         }
 
         Heading direction = this.getHeading(); // Get conveyor belt direction
-        Space nextSpace = gameController.board.getNeighbour(space, direction); // Get next space (already checks walls & bounds)
+        Space nextSpace = gameController.board.getNeighbour(space, direction); // Get next space (checking walls & bounds)
 
         if (nextSpace != null) {
             try {
@@ -77,7 +77,6 @@ public class ConveyorBelt extends FieldAction {
                 return false; // Movement blocked (wall, out of bounds, etc.)
             }
         }
-
         return false; // No valid space to move into
     }
 
