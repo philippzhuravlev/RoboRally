@@ -3,6 +3,7 @@ package dk.dtu.compute.se.pisd.roborally.controller;
 import dk.dtu.compute.se.pisd.roborally.model.Board;
 import dk.dtu.compute.se.pisd.roborally.model.Heading;
 import dk.dtu.compute.se.pisd.roborally.model.Player;
+import dk.dtu.compute.se.pisd.roborally.model.Space;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -186,4 +187,136 @@ class GameControllerTest {
         Assertions.assertEquals(board.getSpace(0, 0), player.getSpace(), "Player should not move out of bounds");
     }
 
+    @Test
+    void testPushSingleRobot() {
+        Board board = gameController.board;
+        Player pusher = board.getPlayer(0);
+        Player pushed = board.getPlayer(1);
+
+        // Set up players in a row, pusher behind pushed
+        pusher.setSpace(board.getSpace(2, 0));
+        pushed.setSpace(board.getSpace(3, 0));
+        pusher.setHeading(Heading.EAST);
+
+        // Move pusher forward (should push the other player)
+        gameController.moveForward(pusher);
+
+        Assertions.assertEquals(board.getSpace(4, 0), pushed.getSpace(), "Pushed robot should be at (4,0)");
+        Assertions.assertEquals(board.getSpace(3, 0), pusher.getSpace(), "Pusher should be at (3,0)");
+    }
+
+    @Test
+    void testPushMultipleRobots() {
+        Board board = gameController.board;
+        Player pusher = board.getPlayer(0);
+        Player pushed1 = board.getPlayer(1);
+        Player pushed2 = board.getPlayer(2);
+
+        // Set up three players in a row
+        pusher.setSpace(board.getSpace(1, 0));
+        pushed1.setSpace(board.getSpace(2, 0));
+        pushed2.setSpace(board.getSpace(3, 0));
+
+        // Ensure the pusher is facing EAST (towards the pushed players)
+        pusher.setHeading(Heading.EAST);
+
+        // Move pusher forward (should push all)
+        gameController.moveForward(pusher);
+
+        // Expected positions based on EAST movement
+        Assertions.assertEquals(board.getSpace(4, 0), pushed2.getSpace(), "Pushed robot 2 should be at (4,0)");
+        Assertions.assertEquals(board.getSpace(3, 0), pushed1.getSpace(), "Pushed robot 1 should be at (3,0)");
+        Assertions.assertEquals(board.getSpace(2, 0), pusher.getSpace(), "Pusher should be at (2,0)");
+    }
+
+    @Test
+    void testPushBlockedByWall() {
+        Board board = gameController.board;
+        Player pusher = board.getPlayer(0);
+        Player pushed = board.getPlayer(1);
+
+        // Set up two players in a row, with a wall blocking the pushed player
+        pusher.setSpace(board.getSpace(2, 0));
+        pushed.setSpace(board.getSpace(3, 0));
+
+        pusher.setHeading(Heading.EAST);
+
+        pushed.getSpace().getWalls().add(Heading.EAST); // Add a wall blocking movement
+
+        // Move pusher forward (should fail)
+        gameController.moveForward(pusher);
+
+        Assertions.assertEquals(board.getSpace(2, 0), pusher.getSpace(), "Pusher should not have moved");
+        Assertions.assertEquals(board.getSpace(3, 0), pushed.getSpace(), "Pushed player should not have moved");
+    }
+
+    @Test
+    void testConveyorBeltMovement() {
+        Board board = gameController.board;
+        Player player = board.getCurrentPlayer();
+        Space startSpace = board.getSpace(2, 2);
+        Space endSpace = board.getSpace(3, 2);
+
+        player.setSpace(startSpace);
+
+        ConveyorBelt belt = new ConveyorBelt();
+        belt.setHeading(Heading.EAST);
+        startSpace.getActions().add(belt);
+
+        gameController.executeFieldActions();
+
+        Assertions.assertEquals(endSpace, player.getSpace(), "Player should have moved to (3,2) due to conveyor belt");
+    }
+
+    @Test
+    void testConveyorBeltBlockedByWall() {
+        Board board = gameController.board;
+        Player player = board.getCurrentPlayer();
+        Space startSpace = board.getSpace(2, 2);
+        Space endSpace = board.getSpace(3, 2);
+
+        player.setSpace(startSpace);
+
+        ConveyorBelt belt = new ConveyorBelt();
+        belt.setHeading(Heading.EAST);
+        startSpace.getActions().add(belt);
+
+        endSpace.getWalls().add(Heading.WEST); // Wall blocking the conveyor movement
+
+        gameController.executeFieldActions();
+
+        Assertions.assertEquals(startSpace, player.getSpace(), "Player should not have moved due to wall");
+    }
+
+    @Test
+    void testCheckpointReachedInOrder() {
+        Board board = gameController.board;
+        Player player = board.getCurrentPlayer();
+        Space checkpointSpace = board.getSpace(2, 2);
+
+        CheckPoint checkpoint = new CheckPoint(1, false);
+        checkpointSpace.getActions().add(checkpoint);
+
+        player.setSpace(checkpointSpace);
+        gameController.executeFieldActions();
+
+        Assertions.assertEquals(1, player.getCheckpointsReached(), "Player should have reached checkpoint 1");
+    }
+
+    @Test
+    void testCheckpointSkipped() {
+        Board board = gameController.board;
+        Player player = board.getCurrentPlayer();
+        Space checkpointSpace = board.getSpace(2, 2);
+
+        CheckPoint checkpoint = new CheckPoint(2, false); // Player hasn't reached checkpoint 1 yet
+        checkpointSpace.getActions().add(checkpoint);
+
+        player.setSpace(checkpointSpace);
+        gameController.executeFieldActions();
+
+        Assertions.assertEquals(0, player.getCheckpointsReached(), "Player should not be able to skip checkpoints");
+    }
+
+    // TODO: Some tests for the Victory Checkpoint maybe?
 }
