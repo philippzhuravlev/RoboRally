@@ -193,6 +193,10 @@ public class GameController {
                 CommandCard card = currentPlayer.getProgramField(step).getCard();
                 if (card != null) {
                     Command command = card.command;
+                    if (command == Command.LEFT_OR_RIGHT) {
+                        board.setPhase(Phase.PLAYER_INTERACTION);
+                        return; // Wait for player interaction
+                    }
                     executeCommand(currentPlayer, command);
                 }
                 int nextPlayerNumber = board.getPlayerNumber(currentPlayer) + 1;
@@ -427,6 +431,34 @@ public class GameController {
     public void notImplemented() {
         // XXX just for now to indicate that the actual method is not yet implemented
         assert false;
+    }
+
+    /**
+     * Executes the given command for the current player and continues with the game.
+     * This method is used for interactive commands where the player needs to make a choice.
+     *
+     * @param player the player executing the command
+     * @param command the command chosen by the player
+     */
+    public void executeCommandAndContinue(@NotNull Player player, Command command) {
+        if (player != null && player.board == board && command != null) {
+            executeCommand(player, command);
+            board.setPhase(Phase.ACTIVATION); // Return to activation phase
+            int nextPlayerNumber = board.getPlayerNumber(player) + 1;
+            if (nextPlayerNumber < board.getPlayersNumber()) {
+                board.setCurrentPlayer(board.getPlayer(nextPlayerNumber));
+            } else {
+                executeFieldActions();
+                int step = board.getStep() + 1;
+                if (step < Player.NO_REGISTERS) {
+                    makeProgramFieldsVisible(step);
+                    board.setStep(step);
+                    board.setCurrentPlayer(board.getPlayer(0));
+                } else {
+                    startProgrammingPhase();
+                }
+            }
+        }
     }
 
 }
