@@ -1,5 +1,6 @@
 package dk.dtu.compute.se.pisd.roborally.controller;
 
+import dk.dtu.compute.se.pisd.roborally.model.Phase;
 import dk.dtu.compute.se.pisd.roborally.model.Player;
 import dk.dtu.compute.se.pisd.roborally.model.Space;
 import javafx.application.Platform;
@@ -40,12 +41,15 @@ public class CheckPoint extends FieldAction {
                 if (!player.hasReachedCheckpoint(number)) {
                     player.setCheckpointsReached(player.getCheckpointsReached() + 1);
                     // VICTORY DIALOG
-                    if (isLast) { // i.e. if true
+                    if (isLast) {
+                        gameController.board.setPhase(Phase.FINISHED);
+
                         Platform.runLater(() -> { // i.e. run javaFX code
                             Alert alert = new Alert(Alert.AlertType.INFORMATION); // alert dialog box like in AppController.java
                             alert.setTitle("Victory!");
                             alert.setHeaderText("You Won!");
-                            alert.setContentText("Player " + player.getName() + " has emerged victorious!");
+                            alert.setContentText("Player " + player.getName() + " has emerged victorious! It took "
+                                    + gameController.board.getCounter() + " moves to do so.");
                             alert.showAndWait();
                         });
                     }
