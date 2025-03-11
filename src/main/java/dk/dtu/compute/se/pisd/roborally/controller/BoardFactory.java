@@ -54,65 +54,66 @@ public class BoardFactory {
     public Board createBoard(String name) {
         Board board;
         if (name == null) {
-            board = new Board(8,8, DEFAULT_NAME);
+            board = new Board(8, 8, DEFAULT_NAME);
         } else {
-            board = new Board(8,8, name);
-            
             if (name.equals(SIMPLE_BOARD_NAME)) {
+                board = new Board(8, 8, name);
                 // No obstacles for now
 
                 // Checkpoints
-                Space space = board.getSpace(4,0);
+                Space space = board.getSpace(4, 0);
                 space.getActions().add(new CheckPoint(1, false));
 
-                space = board.getSpace(5,0);
+                space = board.getSpace(5, 0);
                 space.getActions().add(new CheckPoint(2, false));
-                
-                space = board.getSpace(6,0);
+
+                space = board.getSpace(6, 0);
                 space.getActions().add(new CheckPoint(3, true));
 
             } else if (name.equals(ADVANCED_BOARD_NAME)) {
+                board = new Board(15, 8, name);
 
                 // Obstacles
-                Space space = board.getSpace(0,0);
+                Space space = board.getSpace(0, 0);
                 space.getWalls().add(Heading.SOUTH);
                 ConveyorBelt action = new ConveyorBelt();
                 action.setHeading(Heading.WEST);
                 space.getActions().add(action);
 
-                space = board.getSpace(1,0);
+                space = board.getSpace(1, 0);
                 space.getWalls().add(Heading.NORTH);
                 action = new ConveyorBelt();
                 action.setHeading(Heading.WEST);
                 space.getActions().add(action);
-                
-                space = board.getSpace(1,1);
+
+                space = board.getSpace(1, 1);
                 space.getWalls().add(Heading.WEST);
                 action = new ConveyorBelt();
                 action.setHeading(Heading.NORTH);
                 space.getActions().add(action);
 
-                space = board.getSpace(5,5);
+                space = board.getSpace(5, 5);
                 space.getWalls().add(Heading.SOUTH);
                 action = new ConveyorBelt();
                 action.setHeading(Heading.WEST);
                 space.getActions().add(action);
 
-                space = board.getSpace(6,5);
+                space = board.getSpace(6, 5);
                 action = new ConveyorBelt();
                 action.setHeading(Heading.WEST);
                 space.getActions().add(action);
 
                 // Checkpoints
-                space = board.getSpace(4,0);
+                space = board.getSpace(4, 0);
                 space.getActions().add(new CheckPoint(1, false));
 
-                space = board.getSpace(5,0);
+                space = board.getSpace(5, 0);
                 space.getActions().add(new CheckPoint(2, false));
-                
-                space = board.getSpace(6,0);
-                space.getActions().add(new CheckPoint(3, true));
 
+                space = board.getSpace(6, 0);
+                space.getActions().add(new CheckPoint(3, true));
+            } else {
+                board = new Board(8, 8, name);
             }
         }
         return board;
@@ -124,6 +125,19 @@ public class BoardFactory {
      */
     public static List<String> getAvailableBoardNames() {
         return boardNames;
+    }
+
+    private void addConveyorBelt(Board board, int x, int y, Heading heading) {
+        Space space = board.getSpace(x, y);
+        ConveyorBelt action = new ConveyorBelt();
+        action.setHeading(heading);
+        space.getActions().add(action);}
+
+    private void addWalls(Board board, int x, int y, Heading... headings) {
+        Space space = board.getSpace(x, y);
+        for (Heading heading : headings) {
+            space.getWalls().add(heading);
+        }
     }
 
 }
