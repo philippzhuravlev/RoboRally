@@ -58,17 +58,32 @@ public class BoardFactory {
         } else {
             if (name.equals(SIMPLE_BOARD_NAME)) {
                 board = new Board(8, 8, name);
-                // No obstacles for now
+                
+                // CONVEYOR BELTS
+                for (int y = 2; y <= 5; y++) { // Left
+                    addConveyorBelt(board, 0, y, Heading.SOUTH);
+                }
+                for (int y = 2; y <= 5; y++) { // Right
+                    addConveyorBelt(board, 7, y, Heading.NORTH);
+                }
+                for (int x = 2; x <= 5; x++) { // Top
+                    addConveyorBelt(board, x, 0, Heading.WEST);
+                }
+                for (int x = 2; x <= 5; x++) { // Bottom
+                    addConveyorBelt(board, x, 7, Heading.EAST);
+                }
+                
+                // WALLS
+                addWalls(board, 2, 2, Heading.SOUTH, Heading.EAST);
+                addWalls(board, 2, 5, Heading.NORTH, Heading.EAST);
+                addWalls(board, 5, 2, Heading.WEST, Heading.SOUTH);
+                addWalls(board, 5, 5, Heading.NORTH, Heading.WEST);
 
-                // Checkpoints
-                Space space = board.getSpace(4, 0);
-                space.getActions().add(new CheckPoint(1, false));
-
-                space = board.getSpace(5, 0);
-                space.getActions().add(new CheckPoint(2, false));
-
-                space = board.getSpace(6, 0);
-                space.getActions().add(new CheckPoint(3, true));
+                // CHECKPOINTS 
+                addCheckpoints(board, 2, 2, 1, false);
+                addCheckpoints(board, 2, 5, 2, false);
+                addCheckpoints(board, 5, 5, 3, false);
+                addCheckpoints(board, 5, 2, 4, true);
 
             } else if (name.equals(ADVANCED_BOARD_NAME)) {
                 board = new Board(15, 8, name);
@@ -138,6 +153,11 @@ public class BoardFactory {
         for (Heading heading : headings) {
             space.getWalls().add(heading);
         }
+    }
+
+    private void addCheckpoints(Board board, int x, int y, int checkpointNumber, boolean isFinalCheckpoint) {
+        Space space = board.getSpace(x, y);
+        space.getActions().add(new CheckPoint(checkpointNumber, isFinalCheckpoint));
     }
 
 }
