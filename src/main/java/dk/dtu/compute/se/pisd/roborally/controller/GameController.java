@@ -300,7 +300,7 @@ public class GameController {
 
             moveToSpace(pushed, nextSpace, heading); // Recursively move the pushed player
 
-            // If the space is still occupied, the push failed**
+            // If the space is still occupied, the push failed
             if (space.getPlayer() != null) {
                 throw new ImpossibleMoveException(pusher, space, heading);
             }
