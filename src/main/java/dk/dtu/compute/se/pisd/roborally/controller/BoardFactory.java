@@ -72,46 +72,47 @@ public class BoardFactory {
 
             } else if (name.equals(ADVANCED_BOARD_NAME)) {
                 board = new Board(15, 8, name);
+                Space space;
 
-                // Obstacles
-                Space space = board.getSpace(0, 0);
-                space.getWalls().add(Heading.SOUTH);
-                ConveyorBelt action = new ConveyorBelt();
-                action.setHeading(Heading.WEST);
-                space.getActions().add(action);
+                // Walls (More obstacles across the board)
+                addWalls(board, 3, 0, Heading.SOUTH);
+                addWalls(board, 0, 1, Heading.NORTH);
+                addWalls(board, 4, 3, Heading.WEST);
+                addWalls(board, 9, 2, Heading.WEST);
+                addWalls(board, 6, 6, Heading.NORTH);
+                addWalls(board, 2, 5, Heading.EAST);
+                addWalls(board, 7, 2, Heading.SOUTH);
+                addWalls(board, 8, 4, Heading.WEST);
+                addWalls(board, 10, 6, Heading.NORTH);
+                addWalls(board, 12, 3, Heading.SOUTH);
 
-                space = board.getSpace(1, 0);
-                space.getWalls().add(Heading.NORTH);
-                action = new ConveyorBelt();
-                action.setHeading(Heading.WEST);
-                space.getActions().add(action);
+                // Conveyor Belts (Rearranged to avoid specified positions)
+                addConveyorBelt(board, 0, 6, Heading.NORTH);
+                addConveyorBelt(board, 0, 5, Heading.NORTH);
+                addConveyorBelt(board, 4, 5, Heading.EAST);
+                addConveyorBelt(board, 3, 4, Heading.EAST);
+                addConveyorBelt(board, 9, 3, Heading.NORTH);
+                addConveyorBelt(board, 9, 4, Heading.NORTH);
+                addConveyorBelt(board, 11, 6, Heading.WEST);
+                addConveyorBelt(board, 13, 2, Heading.SOUTH);
+                addConveyorBelt(board, 13, 3, Heading.SOUTH);
+                addConveyorBelt(board, 13, 4, Heading.SOUTH);
+                addConveyorBelt(board, 13, 5, Heading.SOUTH);
+                addConveyorBelt(board, 13, 6, Heading.SOUTH);
 
-                space = board.getSpace(1, 1);
-                space.getWalls().add(Heading.WEST);
-                action = new ConveyorBelt();
-                action.setHeading(Heading.NORTH);
-                space.getActions().add(action);
-
-                space = board.getSpace(5, 5);
-                space.getWalls().add(Heading.SOUTH);
-                action = new ConveyorBelt();
-                action.setHeading(Heading.WEST);
-                space.getActions().add(action);
-
-                space = board.getSpace(6, 5);
-                action = new ConveyorBelt();
-                action.setHeading(Heading.WEST);
-                space.getActions().add(action);
-
-                // Checkpoints
-                space = board.getSpace(4, 0);
+                // Checkpoints (Rearranged to avoid specified positions)
+                space = board.getSpace(9, 2);
                 space.getActions().add(new CheckPoint(1, false));
 
-                space = board.getSpace(5, 0);
+                space = board.getSpace(5, 3);
                 space.getActions().add(new CheckPoint(2, false));
 
-                space = board.getSpace(6, 0);
-                space.getActions().add(new CheckPoint(3, true));
+                space = board.getSpace(7, 6);
+                space.getActions().add(new CheckPoint(3, false));
+
+                space = board.getSpace(13, 7);
+                space.getActions().add(new CheckPoint(4, true));
+
             } else {
                 board = new Board(8, 8, name);
             }
