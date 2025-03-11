@@ -80,10 +80,9 @@ public class BoardFactory {
                 addWalls(board, 5, 5, Heading.NORTH, Heading.WEST);
 
                 // CHECKPOINTS 
-                addCheckpoints(board, 2, 2, 1, false);
-                addCheckpoints(board, 2, 5, 2, false);
-                addCheckpoints(board, 5, 5, 3, false);
-                addCheckpoints(board, 5, 2, 4, true);
+                addCheckpoints(board, 1, 6, 1, false);
+                addCheckpoints(board, 6, 6, 2, false);
+                addCheckpoints(board, 6, 1, 3, true);
 
             } else if (name.equals(ADVANCED_BOARD_NAME)) {
                 board = new Board(15, 8, name);
