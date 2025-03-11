@@ -147,7 +147,7 @@ public class GameController {
     // XXX V2
     private void continuePrograms() {
         do {
-            executeNextStep();
+            executeNextStep(null);
         } while (board.getPhase() == Phase.ACTIVATION && !board.isStepMode());
     }
 
@@ -185,7 +185,9 @@ public class GameController {
      *
      * <p>If the game reaches the last step, the programming phase starts again.</p>
      */
-    private void executeNextStep() {
+
+
+    public void executeNextStep(String interaction) {
         Player currentPlayer = board.getCurrentPlayer();
         if (board.getPhase() == Phase.ACTIVATION && currentPlayer != null) {
             int step = board.getStep();
@@ -193,7 +195,22 @@ public class GameController {
                 CommandCard card = currentPlayer.getProgramField(step).getCard();
                 if (card != null) {
                     Command command = card.command;
-                    executeCommand(currentPlayer, command);
+                    if (command == Command.INTERACTIVE) {
+                        if (interaction == null) {
+                            board.setPhase(Phase.PLAYER_INTERACTION);
+                        return; // Exit the method to wait for player interaction
+                        } else {
+                            if (interaction.equals("left")) {
+                                turnLeft(currentPlayer);
+                            } else if (interaction.equals("right")) {
+                                turnRight(currentPlayer);
+                            }
+                            board.setPhase(Phase.ACTIVATION);
+                            executeCommand(currentPlayer, command);
+                                                    }
+                                            } else {
+                        executeCommand(currentPlayer, command);
+                    }
                 }
                 int nextPlayerNumber = board.getPlayerNumber(currentPlayer) + 1;
                 if (nextPlayerNumber < board.getPlayersNumber()) {

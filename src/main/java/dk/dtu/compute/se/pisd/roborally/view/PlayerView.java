@@ -59,6 +59,8 @@ public class PlayerView extends Tab implements ViewObserver {
     private Button finishButton;
     private Button executeButton;
     private Button stepButton;
+    private Button leftButton;
+    private Button rightButton;
 
     private VBox playerInteractionPanel;
 
@@ -103,6 +105,12 @@ public class PlayerView extends Tab implements ViewObserver {
 
         stepButton = new Button("Execute Current Register");
         stepButton.setOnAction( e-> gameController.executeStep());
+
+        leftButton = new Button("Turn left");
+        leftButton.setOnAction( e-> gameController.executeNextStep("left"));
+
+        rightButton = new Button("Turn right");
+        rightButton.setOnAction( e-> gameController.executeNextStep("right"));
 
         buttonPanel = new VBox(finishButton, executeButton, stepButton);
         buttonPanel.setAlignment(Pos.CENTER_LEFT);
@@ -205,19 +213,21 @@ public class PlayerView extends Tab implements ViewObserver {
                 playerInteractionPanel.getChildren().clear();
 
                 if (player.board.getCurrentPlayer() == player) {
-                    // TODO V3: these buttons should be shown only when there is
-                    //      an interactive command card, and the buttons should represent
-                    //      the player's choices of the interactive command card. The
-                    //      following is just a mockup showing two options
-                    Button optionButton = new Button("Option1");
-                    optionButton.setOnAction( e -> gameController.notImplemented());
-                    optionButton.setDisable(false);
-                    playerInteractionPanel.getChildren().add(optionButton);
+                    Button leftButton = new Button("Turn left");
+                    leftButton.setOnAction(e -> {
+                        gameController.executeNextStep("left");
+                        updateView(player.board); // Update the view after interaction
+                    });
+                    leftButton.setDisable(false);
+                    playerInteractionPanel.getChildren().add(leftButton);
 
-                    optionButton = new Button("Option 2");
-                    optionButton.setOnAction( e -> gameController.notImplemented());
-                    optionButton.setDisable(false);
-                    playerInteractionPanel.getChildren().add(optionButton);
+                    Button rightButton = new Button("Turn right");
+                    rightButton.setOnAction(e -> {
+                        gameController.executeNextStep("right");
+                        updateView(player.board); // Update the view after interaction
+                    });
+                    rightButton.setDisable(false);
+                    playerInteractionPanel.getChildren().add(rightButton);
                 }
             }
         }
