@@ -207,14 +207,14 @@ public class PlayerView extends Tab implements ViewObserver {
                     // Show turn options for LEFT_OR_RIGHT card
                     Button turnLeftButton = new Button("Turn Left");
                     turnLeftButton.setOnAction(e -> {
-                        gameController.executeCommandAndContinue(player, Command.LEFT);
+                        gameController.handleInteractiveCommand(Command.LEFT);
                     });
                     turnLeftButton.setDisable(false);
                     playerInteractionPanel.getChildren().add(turnLeftButton);
 
                     Button turnRightButton = new Button("Turn Right");
                     turnRightButton.setOnAction(e -> {
-                        gameController.executeCommandAndContinue(player, Command.RIGHT);
+                        gameController.handleInteractiveCommand(Command.RIGHT);
                     });
                     turnRightButton.setDisable(false);
                     playerInteractionPanel.getChildren().add(turnRightButton);

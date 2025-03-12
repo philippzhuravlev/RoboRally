@@ -185,15 +185,15 @@ public class GameController {
      *
      * <p>If the game reaches the last step, the programming phase starts again.</p>
      */
-    private void executeNextStep() {
+    private void executeNextStep(Command interactiveCommand) {
         Player currentPlayer = board.getCurrentPlayer();
         if (board.getPhase() == Phase.ACTIVATION && currentPlayer != null) {
             int step = board.getStep();
             if (step >= 0 && step < Player.NO_REGISTERS) {
                 CommandCard card = currentPlayer.getProgramField(step).getCard();
                 if (card != null) {
-                    Command command = card.command;
-                    if (command == Command.LEFT_OR_RIGHT) {
+                    Command command = interactiveCommand != null ? interactiveCommand : card.command;
+                    if (command == Command.LEFT_OR_RIGHT && interactiveCommand == null) {
                         board.setPhase(Phase.PLAYER_INTERACTION);
                         return; // Wait for player interaction
                     }
@@ -219,10 +219,35 @@ public class GameController {
                 // this should not happen
                 assert false;
             }
+        } else if (board.getPhase() == Phase.PLAYER_INTERACTION && currentPlayer != null) {
+            // Handle interactive commands
+            if (interactiveCommand != null) {
+                executeCommand(currentPlayer, interactiveCommand);
+                board.setPhase(Phase.ACTIVATION); // Return to activation phase
+                int nextPlayerNumber = board.getPlayerNumber(currentPlayer) + 1;
+                if (nextPlayerNumber < board.getPlayersNumber()) {
+                    board.setCurrentPlayer(board.getPlayer(nextPlayerNumber));
+                } else {
+                    executeFieldActions();
+                    int step = board.getStep() + 1;
+                    if (step < Player.NO_REGISTERS) {
+                        makeProgramFieldsVisible(step);
+                        board.setStep(step);
+                        board.setCurrentPlayer(board.getPlayer(0));
+                    } else {
+                        startProgrammingPhase();
+                    }
+                }
+            }
         } else {
             // this should not happen
             assert false;
         }
+    }
+
+    // Overload method for non-interactive commands
+    private void executeNextStep() {
+        executeNextStep(null);
     }
 
     // XXX V2
@@ -459,6 +484,10 @@ public class GameController {
                 }
             }
         }
+    }
+
+    public void handleInteractiveCommand(Command interactiveCommand) {
+        executeNextStep(interactiveCommand);
     }
 
 }
