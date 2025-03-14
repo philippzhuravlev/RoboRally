@@ -26,6 +26,7 @@ import dk.dtu.compute.se.pisd.designpatterns.observer.Subject;
 import dk.dtu.compute.se.pisd.roborally.RoboRally;
 import dk.dtu.compute.se.pisd.roborally.model.Board;
 import dk.dtu.compute.se.pisd.roborally.model.Player;
+import dk.dtu.compute.se.pisd.roborally.view.BoardView;
 import javafx.application.Platform;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
@@ -87,6 +88,7 @@ public class AppController implements Observer {
             Board board = BoardFactory.getInstance().createBoard(selectedBoard);
             gameController = new GameController(board);
 
+
             // Add players to board
             for (int i = 0; i < numberOfPlayers; i++) {
                 Player player = new Player(board, PLAYER_COLORS.get(i), "Player " + (i + 1));
@@ -96,7 +98,9 @@ public class AppController implements Observer {
 
             // START PROGRAMMING PHASE
             gameController.startProgrammingPhase();
-            roboRally.createBoardView(gameController);
+            BoardView boardView = roboRally.createBoardView(gameController);
+            gameController.setBoardView(boardView);
+
         }
     }
 

@@ -25,8 +25,11 @@ import dk.dtu.compute.se.pisd.designpatterns.observer.Subject;
 import dk.dtu.compute.se.pisd.roborally.controller.GameController;
 import dk.dtu.compute.se.pisd.roborally.model.Board;
 import dk.dtu.compute.se.pisd.roborally.model.Phase;
+import dk.dtu.compute.se.pisd.roborally.model.Player;
 import dk.dtu.compute.se.pisd.roborally.model.Space;
+import javafx.application.Platform;
 import javafx.event.EventHandler;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Label;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
@@ -115,5 +118,14 @@ public class BoardView extends VBox implements ViewObserver {
         }
 
     }
-
+    public void showVictoryMessage(Player winner) {
+        Platform.runLater(() -> { // i.e. run javaFX code
+            Alert alert = new Alert(Alert.AlertType.INFORMATION); // alert dialog box like in AppController.java
+            alert.setTitle("Victory!");
+            alert.setHeaderText("You Won!");
+            alert.setContentText("Player " + winner.getName() + " has emerged victorious! It took "
+                    + board.getCounter() + " moves.");
+            alert.showAndWait();
+        }); // should not be here
+    }
 }

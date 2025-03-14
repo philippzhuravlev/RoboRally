@@ -23,6 +23,9 @@ package dk.dtu.compute.se.pisd.roborally.controller;
 
 import dk.dtu.compute.se.pisd.roborally.exceptions.ImpossibleMoveException;
 import dk.dtu.compute.se.pisd.roborally.model.*;
+import dk.dtu.compute.se.pisd.roborally.view.BoardView;
+import javafx.application.Platform;
+import javafx.scene.control.Alert;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -32,11 +35,15 @@ import org.jetbrains.annotations.NotNull;
  *
  */
 public class GameController {
-
+    private BoardView boardView;
     final public Board board;
 
     public GameController(@NotNull Board board) {
         this.board = board;
+    }
+
+    public void setBoardView(BoardView boardView) {
+        this.boardView = boardView;
     }
 
     /**
@@ -181,6 +188,7 @@ public class GameController {
     }
 
     // XXX V2
+
     /**
      * Executes the next step in the activation phase of the game.
      *
@@ -223,25 +231,8 @@ public class GameController {
                     // Execute the determined command
                     executeCommand(currentPlayer, command);
                 }
+                proceedToNextPlayer();
 
-                // Move to the next player
-                int nextPlayerNumber = board.getPlayerNumber(currentPlayer) + 1;
-                if (nextPlayerNumber < board.getPlayersNumber()) {
-                    board.setCurrentPlayer(board.getPlayer(nextPlayerNumber));
-                } else {
-                    // All players have executed their commands, so execute field actions
-                    executeFieldActions();
-
-                    // Move to the next step or start the programming phase
-                    step++;
-                    if (step < Player.NO_REGISTERS) {
-                        makeProgramFieldsVisible(step); // Make the next step's fields visible
-                        board.setStep(step); // Update the step
-                        board.setCurrentPlayer(board.getPlayer(0)); // Reset to the first player
-                    } else {
-                        startProgrammingPhase(); // Restart the programming phase
-                    }
-                }
             } else {
                 // This should not happen; invalid step
                 assert false;
@@ -252,23 +243,7 @@ public class GameController {
                 executeCommand(currentPlayer, interactiveCommand); // Execute the interactive command
                 board.setPhase(Phase.ACTIVATION); // Return to the ACTIVATION phase
 
-                // Move to the next player
-                int nextPlayerNumber = board.getPlayerNumber(currentPlayer) + 1;
-                if (nextPlayerNumber < board.getPlayersNumber()) {
-                    board.setCurrentPlayer(board.getPlayer(nextPlayerNumber));
-                } else {
-                    executeFieldActions(); // Execute field actions after all players are done
-
-                    // Move to the next step or start the programming phase
-                    int step = board.getStep() + 1;
-                    if (step < Player.NO_REGISTERS) {
-                        makeProgramFieldsVisible(step); // Make the next step's fields visible
-                        board.setStep(step); // Update the step
-                        board.setCurrentPlayer(board.getPlayer(0)); // Reset to the first player
-                    } else {
-                        startProgrammingPhase(); // Restart the programming phase
-                    }
-                }
+                proceedToNextPlayer(); // Move to the next player
             }
         } else {
             // This should not happen; invalid phase or no current player
@@ -282,6 +257,7 @@ public class GameController {
     }
 
     // XXX V2
+
     /**
      * Executes the given command for the specified player.
      * Depending on the command, the player will move or rotate accordingly.
@@ -379,6 +355,7 @@ public class GameController {
     }
 
     // TODO V2 -- done
+
     /**
      * Moves the player one space forward in the direction they are currently
      * heading.
@@ -447,6 +424,7 @@ public class GameController {
     }
 
     // TODO V2 -- done
+
     /**
      * Moves the player two spaces forward in the direction they are currently
      * heading.
@@ -459,6 +437,7 @@ public class GameController {
     }
 
     // TODO V2 -- done
+
     /**
      * Rotates the player 90 degrees to the right.
      *
@@ -470,6 +449,7 @@ public class GameController {
     }
 
     // TODO V2 -- done
+
     /**
      * Rotates the player 90 degrees to the left.
      *
@@ -524,4 +504,30 @@ public class GameController {
         executeNextStep(interactiveCommand);
     }
 
+    private void proceedToNextPlayer() {
+        // Move to the next player
+        int nextPlayerNumber = board.getPlayerNumber(board.getCurrentPlayer()) + 1;
+        if (nextPlayerNumber < board.getPlayersNumber()) {
+            board.setCurrentPlayer(board.getPlayer(nextPlayerNumber));
+        } else {
+            // All players have executed their commands, so execute field actions
+            executeFieldActions();
+
+            // Move to the next step or start the programming phase
+            int nextStep = board.getStep() + 1;
+            if (nextStep < Player.NO_REGISTERS) {
+                makeProgramFieldsVisible(nextStep); // Make the next step's fields visible
+                board.setStep(nextStep); // Update the step
+                board.setCurrentPlayer(board.getPlayer(0)); // Reset to the first player
+            } else {
+                startProgrammingPhase(); // Restart the programming phase
+            }
+        }
+    }
+
+    public void handleGameEnd(Player winner) {
+        if (boardView != null) {
+            boardView.showVictoryMessage(winner);
+        }
+    }
 }

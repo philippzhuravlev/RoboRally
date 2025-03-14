@@ -43,15 +43,7 @@ public class CheckPoint extends FieldAction {
                     // VICTORY DIALOG
                     if (isLast) {
                         gameController.board.setPhase(Phase.FINISHED);
-
-                        Platform.runLater(() -> { // i.e. run javaFX code
-                            Alert alert = new Alert(Alert.AlertType.INFORMATION); // alert dialog box like in AppController.java
-                            alert.setTitle("Victory!");
-                            alert.setHeaderText("You Won!");
-                            alert.setContentText("Player " + player.getName() + " has emerged victorious! It took "
-                                    + gameController.board.getCounter() + " moves to do so.");
-                            alert.showAndWait();
-                        });
+                        gameController.handleGameEnd(player);
                     }
                 }
                 return true;
