@@ -41,31 +41,31 @@ public class GameController {
 
     /**
      * Moves the current player to the specified space if the space is unoccupied.
-     * Updates the current player to the next player in the sequence and increments the move counter.
+     * Updates the current player to the next player in the sequence and increments
+     * the move counter.
      *
      * @param space the space to which the current player should move
      */
     public void moveCurrentPlayerToSpace(@NotNull Space space) {
         // TODO V1: method should be implemented by the students:
-        //   - the current player should be moved to the given space
-        //     (if it is free())
-        //   - and the current player should be set to the player
-        //     following the current player
-        //   - the counter of moves in the game should be increased by one
-        //     if and when the player is moved (the counter and the status line
-        //     message needs to be implemented at another place) -- done
+        // - the current player should be moved to the given space
+        // (if it is free())
+        // - and the current player should be set to the player
+        // following the current player
+        // - the counter of moves in the game should be increased by one
+        // if and when the player is moved (the counter and the status line
+        // message needs to be implemented at another place) -- done
 
         // moves player to space when clicked on; Probably should be replaced later!
         Player currentPlayer = board.getCurrentPlayer(); // gets current space of a specific player
-        
+
         if (space.getPlayer() == null) { // if getplayer returns null the space does not contain a player
             currentPlayer.setSpace(space); // and if empty we set current player at this space
-            
-            int currentPlayerNumber = board.getPlayerNumber(currentPlayer); //get current Player number
+
+            int currentPlayerNumber = board.getPlayerNumber(currentPlayer); // get current Player number
             int nextPlayerNumber = (currentPlayerNumber + 1) % board.getPlayersNumber(); // move on to the next player
-            
+
             board.setCurrentPlayer(board.getPlayer(nextPlayerNumber)); // set current player as the "next player"
-            
 
             board.setCounter(board.getCounter() + 1); // Increment the counter when a move is made .
         }
@@ -154,11 +154,17 @@ public class GameController {
     /**
      * Executes all field actions for the current game state.
      *
-     * <p>This method processes any field actions (such as conveyor belts and checkpoints)
-     * for all players currently on the board. It iterates over all players, retrieves their
-     * current space, and triggers any field actions assigned to that space.</p>
+     * <p>
+     * This method processes any field actions (such as conveyor belts and
+     * checkpoints)
+     * for all players currently on the board. It iterates over all players,
+     * retrieves their
+     * current space, and triggers any field actions assigned to that space.
+     * </p>
      *
-     * <p>Each field action is executed by calling its `doAction()` method.</p>
+     * <p>
+     * Each field action is executed by calling its `doAction()` method.
+     * </p>
      */
     void executeFieldActions() {
         for (int i = 0; i < board.getPlayersNumber(); i++) {
@@ -178,47 +184,101 @@ public class GameController {
     /**
      * Executes the next step in the activation phase of the game.
      *
-     * <p>This method processes the next command card for the current player.
+     * <p>
+     * This method processes the next command card for the current player.
      * After executing the command, it moves to the next player. When all players
-     * have executed their commands for the current step, field actions (such as conveyor belts)
-     * are triggered. The game then progresses to the next step or restarts the programming phase.</p>
+     * have executed their commands for the current step, field actions (such as
+     * conveyor belts)
+     * are triggered. The game then progresses to the next step or restarts the
+     * programming phase.
+     * </p>
      *
-     * <p>If the game reaches the last step, the programming phase starts again.</p>
+     * <p>
+     * If the game reaches the last step, the programming phase starts again.
+     * </p>
      */
-    private void executeNextStep() {
+    private void executeNextStep(Command interactiveCommand) {
+        // Get the current player from the board
         Player currentPlayer = board.getCurrentPlayer();
+
+        // Check if the game is in the ACTIVATION phase and there is a current player
         if (board.getPhase() == Phase.ACTIVATION && currentPlayer != null) {
             int step = board.getStep();
+
+            // Ensure the step is within valid bounds
             if (step >= 0 && step < Player.NO_REGISTERS) {
+                // Retrieve the command card for the current step
                 CommandCard card = currentPlayer.getProgramField(step).getCard();
+
                 if (card != null) {
-                    Command command = card.command;
+                    // Determine the command to execute (interactive or from the card)
+                    Command command = interactiveCommand != null ? interactiveCommand : card.command;
+
+                    // If the command requires player interaction and no interaction is provided
+                    if (command == Command.LEFT_OR_RIGHT && interactiveCommand == null) {
+                        board.setPhase(Phase.PLAYER_INTERACTION); // Switch to interaction phase
+                        return; // Wait for player interaction
+                    }
+
+                    // Execute the determined command
                     executeCommand(currentPlayer, command);
                 }
+
+                // Move to the next player
                 int nextPlayerNumber = board.getPlayerNumber(currentPlayer) + 1;
                 if (nextPlayerNumber < board.getPlayersNumber()) {
                     board.setCurrentPlayer(board.getPlayer(nextPlayerNumber));
                 } else {
-                    // all players have executed their commands, so execute field actions
+                    // All players have executed their commands, so execute field actions
                     executeFieldActions();
 
+                    // Move to the next step or start the programming phase
                     step++;
                     if (step < Player.NO_REGISTERS) {
-                        makeProgramFieldsVisible(step);
-                        board.setStep(step);
-                        board.setCurrentPlayer(board.getPlayer(0));
+                        makeProgramFieldsVisible(step); // Make the next step's fields visible
+                        board.setStep(step); // Update the step
+                        board.setCurrentPlayer(board.getPlayer(0)); // Reset to the first player
                     } else {
-                        startProgrammingPhase();
+                        startProgrammingPhase(); // Restart the programming phase
                     }
                 }
             } else {
-                // this should not happen
+                // This should not happen; invalid step
                 assert false;
             }
+        } else if (board.getPhase() == Phase.PLAYER_INTERACTION && currentPlayer != null) {
+            // Handle interactive commands during the PLAYER_INTERACTION phase
+            if (interactiveCommand != null) {
+                executeCommand(currentPlayer, interactiveCommand); // Execute the interactive command
+                board.setPhase(Phase.ACTIVATION); // Return to the ACTIVATION phase
+
+                // Move to the next player
+                int nextPlayerNumber = board.getPlayerNumber(currentPlayer) + 1;
+                if (nextPlayerNumber < board.getPlayersNumber()) {
+                    board.setCurrentPlayer(board.getPlayer(nextPlayerNumber));
+                } else {
+                    executeFieldActions(); // Execute field actions after all players are done
+
+                    // Move to the next step or start the programming phase
+                    int step = board.getStep() + 1;
+                    if (step < Player.NO_REGISTERS) {
+                        makeProgramFieldsVisible(step); // Make the next step's fields visible
+                        board.setStep(step); // Update the step
+                        board.setCurrentPlayer(board.getPlayer(0)); // Reset to the first player
+                    } else {
+                        startProgrammingPhase(); // Restart the programming phase
+                    }
+                }
+            }
         } else {
-            // this should not happen
+            // This should not happen; invalid phase or no current player
             assert false;
         }
+    }
+
+    // Overload method for non-interactive commands
+    private void executeNextStep() {
+        executeNextStep(null);
     }
 
     // XXX V2
@@ -232,8 +292,9 @@ public class GameController {
     private void executeCommand(@NotNull Player player, Command command) {
         if (player != null && player.board == board && command != null) {
             // XXX This is a very simplistic way of dealing with some basic cards and
-            //     their execution. This should eventually be done in a more elegant way
-            //     (this concerns the way cards are modelled as well as the way they are executed).
+            // their execution. This should eventually be done in a more elegant way
+            // (this concerns the way cards are modelled as well as the way they are
+            // executed).
 
             switch (command) {
                 case FORWARD:
@@ -263,18 +324,27 @@ public class GameController {
     /**
      * Moves a player to a specified space in the given direction.
      *
-     * <p>If another player is already in the target space, they will be pushed recursively
-     * until a free space is found or movement becomes impossible (e.g., due to a wall or board limits).</p>
+     * <p>
+     * If another player is already in the target space, they will be pushed
+     * recursively
+     * until a free space is found or movement becomes impossible (e.g., due to a
+     * wall or board limits).
+     * </p>
      *
-     * <p>If movement is not possible (e.g., the path is blocked by a wall or the board's edge),
-     * an {@code ImpossibleMoveException} is thrown.</p>
+     * <p>
+     * If movement is not possible (e.g., the path is blocked by a wall or the
+     * board's edge),
+     * an {@code ImpossibleMoveException} is thrown.
+     * </p>
      *
      * @param pusher  the player attempting to move
      * @param space   the target space
      * @param heading the direction of movement
-     * @throws ImpossibleMoveException if movement is blocked (e.g., by walls, board limits, or no free space to push a player)
+     * @throws ImpossibleMoveException if movement is blocked (e.g., by walls, board
+     *                                 limits, or no free space to push a player)
      */
-    void moveToSpace(@NotNull Player pusher, @NotNull Space space, @NotNull Heading heading) throws ImpossibleMoveException {
+    void moveToSpace(@NotNull Player pusher, @NotNull Space space, @NotNull Heading heading)
+            throws ImpossibleMoveException {
         if (space == pusher.getSpace()) {
             throw new ImpossibleMoveException(pusher, space, heading); // Out of bounds or invalid space
         }
@@ -297,7 +367,6 @@ public class GameController {
                 throw new ImpossibleMoveException(pusher, space, heading); // Can't push, movement fails
             }
 
-
             moveToSpace(pushed, nextSpace, heading); // Recursively move the pushed player
 
             // If the space is still occupied, the push failed
@@ -311,12 +380,19 @@ public class GameController {
 
     // TODO V2 -- done
     /**
-     * Moves the player one space forward in the direction they are currently heading.
+     * Moves the player one space forward in the direction they are currently
+     * heading.
      *
-     * <p>If another player is already in the target space, they will be pushed recursively
-     * using {@code moveToSpace()}.</p>
+     * <p>
+     * If another player is already in the target space, they will be pushed
+     * recursively
+     * using {@code moveToSpace()}.
+     * </p>
      *
-     * <p>If movement is blocked (e.g., by a wall or the edge of the board), the player remains in place.</p>
+     * <p>
+     * If movement is blocked (e.g., by a wall or the edge of the board), the player
+     * remains in place.
+     * </p>
      *
      * @param player the player to move forward
      */
@@ -340,10 +416,16 @@ public class GameController {
     /**
      * Moves the player one space backward (opposite of their current heading).
      *
-     * <p>If another player is already in the target space, they will be pushed recursively
-     * using {@code moveToSpace()}.</p>
+     * <p>
+     * If another player is already in the target space, they will be pushed
+     * recursively
+     * using {@code moveToSpace()}.
+     * </p>
      *
-     * <p>If movement is blocked (e.g., by a wall or the edge of the board), the player remains in place.</p>
+     * <p>
+     * If movement is blocked (e.g., by a wall or the edge of the board), the player
+     * remains in place.
+     * </p>
      *
      * @param player the player to move backward
      */
@@ -366,7 +448,8 @@ public class GameController {
 
     // TODO V2 -- done
     /**
-     * Moves the player two spaces forward in the direction they are currently heading.
+     * Moves the player two spaces forward in the direction they are currently
+     * heading.
      *
      * @param player the player to move forward
      */
@@ -421,12 +504,24 @@ public class GameController {
     }
 
     /**
-     * A method called when no corresponding controller operation is implemented yet.
+     * A method called when no corresponding controller operation is implemented
+     * yet.
      * This should eventually be removed.
      */
     public void notImplemented() {
         // XXX just for now to indicate that the actual method is not yet implemented
         assert false;
+    }
+
+    /**
+     * Handles an interactive command by executing the next step associated with it.
+     * This method is typically used to process commands that require immediate
+     * interaction or response during the game.
+     *
+     * @param interactiveCommand the command to be handled and executed
+     */
+    public void handleInteractiveCommand(Command interactiveCommand) {
+        executeNextStep(interactiveCommand);
     }
 
 }
