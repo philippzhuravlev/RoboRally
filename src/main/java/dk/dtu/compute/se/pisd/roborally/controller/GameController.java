@@ -198,61 +198,80 @@ public class GameController {
      * </p>
      */
     private void executeNextStep(Command interactiveCommand) {
+        // Get the current player from the board
         Player currentPlayer = board.getCurrentPlayer();
+
+        // Check if the game is in the ACTIVATION phase and there is a current player
         if (board.getPhase() == Phase.ACTIVATION && currentPlayer != null) {
             int step = board.getStep();
+
+            // Ensure the step is within valid bounds
             if (step >= 0 && step < Player.NO_REGISTERS) {
+                // Retrieve the command card for the current step
                 CommandCard card = currentPlayer.getProgramField(step).getCard();
+
                 if (card != null) {
+                    // Determine the command to execute (interactive or from the card)
                     Command command = interactiveCommand != null ? interactiveCommand : card.command;
+
+                    // If the command requires player interaction and no interaction is provided
                     if (command == Command.LEFT_OR_RIGHT && interactiveCommand == null) {
-                        board.setPhase(Phase.PLAYER_INTERACTION);
+                        board.setPhase(Phase.PLAYER_INTERACTION); // Switch to interaction phase
                         return; // Wait for player interaction
                     }
+
+                    // Execute the determined command
                     executeCommand(currentPlayer, command);
                 }
+
+                // Move to the next player
                 int nextPlayerNumber = board.getPlayerNumber(currentPlayer) + 1;
                 if (nextPlayerNumber < board.getPlayersNumber()) {
                     board.setCurrentPlayer(board.getPlayer(nextPlayerNumber));
                 } else {
-                    // all players have executed their commands, so execute field actions
+                    // All players have executed their commands, so execute field actions
                     executeFieldActions();
 
+                    // Move to the next step or start the programming phase
                     step++;
                     if (step < Player.NO_REGISTERS) {
-                        makeProgramFieldsVisible(step);
-                        board.setStep(step);
-                        board.setCurrentPlayer(board.getPlayer(0));
+                        makeProgramFieldsVisible(step); // Make the next step's fields visible
+                        board.setStep(step); // Update the step
+                        board.setCurrentPlayer(board.getPlayer(0)); // Reset to the first player
                     } else {
-                        startProgrammingPhase();
+                        startProgrammingPhase(); // Restart the programming phase
                     }
                 }
             } else {
-                // this should not happen
+                // This should not happen; invalid step
                 assert false;
             }
         } else if (board.getPhase() == Phase.PLAYER_INTERACTION && currentPlayer != null) {
-            // Handle interactive commands
+            // Handle interactive commands during the PLAYER_INTERACTION phase
             if (interactiveCommand != null) {
-                executeCommand(currentPlayer, interactiveCommand);
-                board.setPhase(Phase.ACTIVATION); // Return to activation phase
+                executeCommand(currentPlayer, interactiveCommand); // Execute the interactive command
+                board.setPhase(Phase.ACTIVATION); // Return to the ACTIVATION phase
+
+                // Move to the next player
                 int nextPlayerNumber = board.getPlayerNumber(currentPlayer) + 1;
                 if (nextPlayerNumber < board.getPlayersNumber()) {
                     board.setCurrentPlayer(board.getPlayer(nextPlayerNumber));
                 } else {
-                    executeFieldActions();
+                    executeFieldActions(); // Execute field actions after all players are done
+
+                    // Move to the next step or start the programming phase
                     int step = board.getStep() + 1;
                     if (step < Player.NO_REGISTERS) {
-                        makeProgramFieldsVisible(step);
-                        board.setStep(step);
-                        board.setCurrentPlayer(board.getPlayer(0));
+                        makeProgramFieldsVisible(step); // Make the next step's fields visible
+                        board.setStep(step); // Update the step
+                        board.setCurrentPlayer(board.getPlayer(0)); // Reset to the first player
                     } else {
-                        startProgrammingPhase();
+                        startProgrammingPhase(); // Restart the programming phase
                     }
                 }
             }
         } else {
-            // this should not happen
+            // This should not happen; invalid phase or no current player
             assert false;
         }
     }
