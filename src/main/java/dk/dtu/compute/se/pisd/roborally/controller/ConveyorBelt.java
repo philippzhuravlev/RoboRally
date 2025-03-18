@@ -65,8 +65,8 @@ public class ConveyorBelt extends FieldAction {
             return false; // No player on the conveyor belt, nothing happens
         }
 
-        Heading direction = this.getHeading(); // Get conveyor belt direction
-        Space nextSpace = gameController.board.getNeighbour(space, direction); // Get next space (checking walls & bounds)
+        Heading direction = this.getHeading();
+        Space nextSpace = gameController.board.getNeighbour(space, direction);
 
         if (nextSpace != null) {
             try {

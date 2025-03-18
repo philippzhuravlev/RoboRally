@@ -44,40 +44,29 @@ public class GameController {
         this.boardView = boardView;
     }
 
+    // ASSIGNMENT 4a
     /**
      * Moves the current player to the specified space if it is unoccupied.
-     *
      * <p>If the movement is successful, the game advances to the next player in the sequence,
      * and the move counter is incremented.</p>
      *
      * @param space the destination space for the current player
      */
     public void moveCurrentPlayerToSpace(@NotNull Space space) {
-        // TODO V1: method should be implemented by the students:
-        // - the current player should be moved to the given space
-        // (if it is free())
-        // - and the current player should be set to the player
-        // following the current player
-        // - the counter of moves in the game should be increased by one
-        // if and when the player is moved (the counter and the status line
-        // message needs to be implemented at another place) -- done
-
-        // Moves player to space when clicked on
         Player currentPlayer = board.getCurrentPlayer();
 
-        if (space.getPlayer() == null) { // If null, the space does not contain a player
-            currentPlayer.setSpace(space); // Set current player at this space
+        if (space.getPlayer() == null) {
+            currentPlayer.setSpace(space);
 
-            int currentPlayerNumber = board.getPlayerNumber(currentPlayer); // Get current Player number
-            int nextPlayerNumber = (currentPlayerNumber + 1) % board.getPlayersNumber(); // Move on to the next player
+            int currentPlayerNumber = board.getPlayerNumber(currentPlayer);
+            int nextPlayerNumber = (currentPlayerNumber + 1) % board.getPlayersNumber();
 
-            board.setCurrentPlayer(board.getPlayer(nextPlayerNumber)); // Set current player as the "next player"
+            board.setCurrentPlayer(board.getPlayer(nextPlayerNumber));
 
             board.setCounter(board.getCounter() + 1);
         }
     }
 
-    // XXX V2
     public void startProgrammingPhase() {
         board.setPhase(Phase.PROGRAMMING);
         board.setCurrentPlayer(board.getPlayer(0));
@@ -100,14 +89,12 @@ public class GameController {
         }
     }
 
-    // XXX V2
     private CommandCard generateRandomCommandCard() {
         Command[] commands = Command.values();
         int random = (int) (Math.random() * commands.length);
         return new CommandCard(commands[random]);
     }
 
-    // XXX V2
     public void finishProgrammingPhase() {
         makeProgramFieldsInvisible();
         makeProgramFieldsVisible(0);
@@ -116,7 +103,6 @@ public class GameController {
         board.setStep(0);
     }
 
-    // XXX V2
     private void makeProgramFieldsVisible(int register) {
         if (register >= 0 && register < Player.NO_REGISTERS) {
             for (int i = 0; i < board.getPlayersNumber(); i++) {
@@ -127,7 +113,6 @@ public class GameController {
         }
     }
 
-    // XXX V2
     private void makeProgramFieldsInvisible() {
         for (int i = 0; i < board.getPlayersNumber(); i++) {
             Player player = board.getPlayer(i);
@@ -138,19 +123,16 @@ public class GameController {
         }
     }
 
-    // XXX V2
     public void executePrograms() {
         board.setStepMode(false);
         continuePrograms();
     }
 
-    // XXX V2
     public void executeStep() {
         board.setStepMode(true);
         continuePrograms();
     }
 
-    // XXX V2
     private void continuePrograms() {
         do {
             executeNextStep();
@@ -180,8 +162,6 @@ public class GameController {
         }
     }
 
-    // XXX V2
-
     /**
      * Executes the next step in the activation phase of the game.
      *
@@ -200,48 +180,35 @@ public class GameController {
      *                           or {@code null} if no interaction is provided
      */
     private void executeNextStep(Command interactiveCommand) {
-        // Get the current player from the board
         Player currentPlayer = board.getCurrentPlayer();
-
-        // Check if the game is in the ACTIVATION phase and there is a current player
+        // ACTIVATION PHASE -> executes next step for player
         if (board.getPhase() == Phase.ACTIVATION && currentPlayer != null) {
             int step = board.getStep();
-
-            // Ensure the step is within valid bounds
-            if (step >= 0 && step < Player.NO_REGISTERS) {
-                // Retrieve the command card for the current step
-                CommandCard card = currentPlayer.getProgramField(step).getCard();
-
+            if (step >= 0 && step < Player.NO_REGISTERS) { // ensure the step is within valid bounds
+                CommandCard card = currentPlayer.getProgramField(step).getCard(); // get current command card
                 if (card != null) {
-                    // Determine the command to execute (interactive or from the card)
-                    Command command = interactiveCommand != null ? interactiveCommand : card.command;
-
-                    // If the command requires player interaction and no interaction is provided
+                    // ? : notaton = if interactiveCommand is not null, use it, otherwise use the card command
+                    Command command = interactiveCommand != null ? interactiveCommand : card.command; 
                     if (command == Command.LEFT_OR_RIGHT && interactiveCommand == null) {
                         board.setPhase(Phase.PLAYER_INTERACTION); // Switch to interaction phase
                         return; // Wait for player interaction
                     }
-
-                    // Execute the determined command
                     executeCommand(currentPlayer, command);
                 }
                 proceedToNextPlayer();
 
             } else {
-                // This should not happen; invalid step
-                assert false;
+                assert false; // this should not happen; invalid step is performed
             }
+        // INTERACTION PHASE -> executes interactive command for player
         } else if (board.getPhase() == Phase.PLAYER_INTERACTION && currentPlayer != null) {
-            // Handle interactive commands during the PLAYER_INTERACTION phase
             if (interactiveCommand != null) {
-                executeCommand(currentPlayer, interactiveCommand); // Execute the interactive command
-                board.setPhase(Phase.ACTIVATION); // Return to the ACTIVATION phase
-
-                proceedToNextPlayer(); // Move to the next player
+                executeCommand(currentPlayer, interactiveCommand);
+                board.setPhase(Phase.ACTIVATION);
+                proceedToNextPlayer(); 
             }
         } else {
-            // This should not happen; invalid phase or no current player
-            assert false;
+            assert false; // again, this should not happen; invalid phase or no current player
         }
     }
 
@@ -249,8 +216,6 @@ public class GameController {
     private void executeNextStep() {
         executeNextStep(null);
     }
-
-    // XXX V2
 
     /**
      * Executes the given command for the specified player.
@@ -261,11 +226,6 @@ public class GameController {
      */
     private void executeCommand(@NotNull Player player, Command command) {
         if (player != null && player.board == board && command != null) {
-            // XXX This is a very simplistic way of dealing with some basic cards and
-            // their execution. This should eventually be done in a more elegant way
-            // (this concerns the way cards are modelled as well as the way they are
-            // executed).
-
             switch (command) {
                 case FORWARD:
                     this.moveForward(player);
@@ -315,14 +275,13 @@ public class GameController {
      */
     void moveToSpace(@NotNull Player pusher, @NotNull Space space, @NotNull Heading heading)
             throws ImpossibleMoveException {
-        if (space == pusher.getSpace()) {
-            throw new ImpossibleMoveException(pusher, space, heading); // Out of bounds or invalid space
+        if (space == pusher.getSpace()) { // Out of bounds or invalid space
+            throw new ImpossibleMoveException(pusher, space, heading); 
         }
 
-        // Ensure walls block movement
+        // HANDLE WALLS
         Space currentSpace = pusher.getSpace();
         Space neighbour = board.getNeighbour(currentSpace, heading);
-
         if (neighbour == null || currentSpace.getWalls().contains(heading)) {
             throw new ImpossibleMoveException(pusher, space, heading); // Blocked by a wall
         }
@@ -332,9 +291,9 @@ public class GameController {
         if (pushed != null) {
             Space nextSpace = board.getNeighbour(space, heading);
 
-            // Throw exception instead of stopping silently
+            // Can't push, throw exception
             if (nextSpace == null || space.getWalls().contains(heading)) {
-                throw new ImpossibleMoveException(pusher, space, heading); // Can't push, movement fails
+                throw new ImpossibleMoveException(pusher, space, heading); 
             }
 
             moveToSpace(pushed, nextSpace, heading); // Recursively move the pushed player
@@ -347,8 +306,6 @@ public class GameController {
 
         pusher.setSpace(space); // Move only if everything succeeded
     }
-
-    // TODO V2 -- done
 
     /**
      * Moves the player one space forward in the direction they are currently
@@ -409,16 +366,15 @@ public class GameController {
             if (target != null) {
                 try {
                     moveToSpace(player, target, heading);
-                    board.setCounter(board.getCounter() + 1); // Increment counter here
+                    board.setCounter(board.getCounter() + 1); // Increment counter 
                 } catch (ImpossibleMoveException e) {
                     // Don't do anything if the movement fails
+                    // Could throw exceptions in a console, but this is not part of the assignment
                 }
             }
         }
     }
-
-    // TODO V2 -- done
-
+    
     /**
      * Moves the player two spaces forward in the direction they are currently
      * heading.
@@ -430,8 +386,6 @@ public class GameController {
         moveForward(player);
     }
 
-    // TODO V2 -- done
-
     /**
      * Rotates the player 90 degrees to the right.
      *
@@ -439,10 +393,8 @@ public class GameController {
      */
     public void turnRight(@NotNull Player player) {
         player.setHeading(player.getHeading().next());
-        board.setCounter(board.getCounter() + 1); // Increment counter here
+        board.setCounter(board.getCounter() + 1); // Increment counter
     }
-
-    // TODO V2 -- done
 
     /**
      * Rotates the player 90 degrees to the left.
@@ -451,7 +403,7 @@ public class GameController {
      */
     public void turnLeft(@NotNull Player player) {
         player.setHeading(player.getHeading().prev());
-        board.setCounter(board.getCounter() + 1); // Increment counter here
+        board.setCounter(board.getCounter() + 1); // Increment counter 
     }
 
     /**
@@ -462,9 +414,16 @@ public class GameController {
      */
     public void turnU(@NotNull Player player) {
         player.setHeading(player.getHeading().opposite());
-        board.setCounter(board.getCounter() + 1); // Increment counter here
+        board.setCounter(board.getCounter() + 1); // Increment counter 
     }
 
+    /**
+     * Moves a command card from the source field to the target field.
+     *
+     * @param source the command card field from which the card is moved
+     * @param target the command card field to which the card is moved
+     * @return {@code true} if the card was successfully moved; {@code false} otherwise
+     */
     public boolean moveCards(@NotNull CommandCardField source, @NotNull CommandCardField target) {
         CommandCard sourceCard = source.getCard();
         CommandCard targetCard = target.getCard();
@@ -478,12 +437,9 @@ public class GameController {
     }
 
     /**
-     * A method called when no corresponding controller operation is implemented
-     * yet.
-     * This should eventually be removed.
+     * A method called when no corresponding controller operation is implemented yet
      */
     public void notImplemented() {
-        // XXX just for now to indicate that the actual method is not yet implemented
         assert false;
     }
 
@@ -498,27 +454,34 @@ public class GameController {
         executeNextStep(interactiveCommand);
     }
 
+    /**
+     * Proceeds to the next player in the game.
+     * This method updates the current player to the next player in the sequence.
+     * If all players have executed their commands, it triggers the execution of field actions.
+     */
     private void proceedToNextPlayer() {
-        // Move to the next player
-        int nextPlayerNumber = board.getPlayerNumber(board.getCurrentPlayer()) + 1;
-        if (nextPlayerNumber < board.getPlayersNumber()) {
+        int nextPlayerNumber = board.getPlayerNumber(board.getCurrentPlayer()) + 1; // i.e. find next player
+        if (nextPlayerNumber < board.getPlayersNumber()) { // Move to the next player
             board.setCurrentPlayer(board.getPlayer(nextPlayerNumber));
         } else {
-            // All players have executed their commands, so execute field actions
             executeFieldActions();
-
-            // Move to the next step or start the programming phase
+            
             int nextStep = board.getStep() + 1;
             if (nextStep < Player.NO_REGISTERS) {
                 makeProgramFieldsVisible(nextStep); // Make the next step's fields visible
-                board.setStep(nextStep); // Update the step
+                board.setStep(nextStep);
                 board.setCurrentPlayer(board.getPlayer(0)); // Reset to the first player
             } else {
-                startProgrammingPhase(); // Restart the programming phase
+                startProgrammingPhase(); // Restart programming phase
             }
         }
     }
 
+    /**
+     * Handles the end of the game by displaying a victory message.
+     *
+     * @param winner the player who won the game
+     */
     public void handleGameEnd(Player winner) {
         if (boardView != null) {
             boardView.showVictoryMessage(winner);
