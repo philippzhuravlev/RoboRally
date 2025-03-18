@@ -44,6 +44,7 @@ public class Player extends Subject {
     private Space space;
     private Heading heading = SOUTH;
 
+    private int checkpointsReached = 0;
     private int lastCheckpoint = 0; // i.e. checkpoint 1, then 2, then 3, etc.
 
     private CommandCardField[] program;
@@ -158,4 +159,24 @@ public class Player extends Subject {
         return cards[i];
     }
 
+    public int getCheckpointsReached() {
+        return checkpointsReached;
+    }
+
+    public void setCheckpointsReached(int i) {
+        if (i != checkpointsReached) {
+            checkpointsReached = i;
+            notifyChange();
+        }
+    }
+
+    /**
+     * Checks if the player has reached a specific checkpoint.
+     *
+     * @param checkpointNumber the checkpoint number to check
+     * @return {@code true} if the player has reached or surpassed the specified checkpoint, {@code false} otherwise
+     */
+    public boolean hasReachedCheckpoint(int checkpointNumber) {
+        return this.checkpointsReached >= checkpointNumber;
+    }
 }

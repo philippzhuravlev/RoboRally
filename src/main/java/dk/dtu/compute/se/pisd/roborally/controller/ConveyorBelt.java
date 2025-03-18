@@ -21,6 +21,7 @@
  */
 package dk.dtu.compute.se.pisd.roborally.controller;
 
+import dk.dtu.compute.se.pisd.roborally.exceptions.ImpossibleMoveException;
 import dk.dtu.compute.se.pisd.roborally.model.Heading;
 import dk.dtu.compute.se.pisd.roborally.model.Space;
 import org.jetbrains.annotations.NotNull;
@@ -36,7 +37,6 @@ public class ConveyorBelt extends FieldAction {
 
     private Heading heading;
 
-
     public Heading getHeading() {
         return heading;
     }
@@ -46,14 +46,36 @@ public class ConveyorBelt extends FieldAction {
     }
 
     /**
-     * Implementation of the action of a conveyor belt. Needs to be implemented for A3.
+     * Executes the conveyor belt action for the given space.
+     *
+     * <p>If a player is on the conveyor belt, they are pushed one space in the
+     * belt's direction, provided that movement is not blocked by a wall or the
+     * edge of the board.</p>
+     *
+     * <p>If movement is not possible due to an obstacle, such as a wall or
+     * an out-of-bounds situation, the player remains in place.</p>
+     *
+     * @param gameController the game controller managing game logic
+     * @param space the space where the conveyor belt action occurs
+     * @return {@code true} if the player was moved successfully, {@code false} otherwise
      */
     @Override
     public boolean doAction(@NotNull GameController gameController, @NotNull Space space) {
-        // TODO A3: needs to be implemented
-        // ...
+        if (space.getPlayer() == null) {
+            return false; // No player on the conveyor belt, nothing happens
+        }
 
-        return false;
+        Heading direction = this.getHeading();
+        Space nextSpace = gameController.board.getNeighbour(space, direction);
+
+        if (nextSpace != null) {
+            try {
+                gameController.moveToSpace(space.getPlayer(), nextSpace, direction);
+                return true; // Action successful, player moved
+            } catch (ImpossibleMoveException e) {
+                return false; // Movement blocked (wall, out of bounds, etc.)
+            }
+        }
+        return false; // No valid space to move into
     }
-
 }

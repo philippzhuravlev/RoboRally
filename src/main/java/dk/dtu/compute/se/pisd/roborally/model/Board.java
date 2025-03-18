@@ -192,49 +192,72 @@ public class Board extends Subject {
 
     /**
      * Returns the neighbour of the given space of the board in the given heading.
-     * The neighbour is returned only, if it can be reached from the given space
-     * (no walls or obstacles in either of the involved spaces); otherwise,
-     * null will be returned.
+     * The neighbour is returned only if it can be reached from the given space
+     * (no walls or obstacles in either of the involved spaces) and is within the board's bounds;
+     * otherwise, the current space is returned.
      *
      * @param space the space for which the neighbour should be computed
      * @param heading the heading of the neighbour
-     * @return the space in the given direction; null if there is no (reachable) neighbour
+     * @return the space in the given direction; the current space if there is no (reachable) neighbour
      */
     public Space getNeighbour(@NotNull Space space, @NotNull Heading heading) {
         // TODO A3: This implementation needs to be adjusted so that walls on
         //          spaces (and maybe other obstacles) are taken into account
-        //          (see above JavaDoc comment for this method).
+        //          (see above JavaDoc comment for this method) -- done
         int x = space.x;
         int y = space.y;
         switch (heading) {
             case SOUTH:
-                y = (y + 1) % height;
+                y = y + 1;
                 break;
             case WEST:
-                x = (x + width - 1) % width;
+                x = x - 1;
                 break;
             case NORTH:
-                y = (y + height - 1) % height;
+                y = y - 1;
                 break;
             case EAST:
-                x = (x + 1) % width;
+                x = x + 1;
                 break;
         }
 
-        return getSpace(x, y);
+        // Check for out-of-bounds before applying modulo
+        if (x < 0 || x >= width || y < 0 || y >= height) {
+            return getSpace(space.x, space.y);
+        }
+
+        // Apply modulo to wrap around
+        x = (x + width) % width;
+        y = (y + height) % height;
+
+        Space neighbour = getSpace(x, y);
+        if (neighbour != null) {
+            if (space.getWalls().contains(heading) || neighbour.getWalls().contains(heading.opposite())) {
+                return getSpace(space.x, space.y);
+            }
+        }
+        return neighbour;
     }
 
     /**
-     * Returns the status message of the board.
-     * The status message includes the current phase, the current player's name, and the move counter.
+     * Returns the current status message of the board.
      *
-     * @return the status message of the board
+     * <p>The status message includes:</p>
+     * <ul>
+     *     <li>The current game phase</li>
+     *     <li>The name of the current player</li>
+     *     <li>The total number of moves made</li>
+     *     <li>The current program register step</li>
+     *     <li>The number of checkpoints reached by the current player</li>
+     * </ul>
+     *
+     * @return a formatted string representing the current game status
      */
     public String getStatusMessage() {
         // TODO V1: add the move count to the status message -- done
-        // TODO V2: changed the status so that it shows the phase, the current player, and the current register
-        // Return both the current player name and the move counter
-        return "Player = " + getCurrentPlayer().getName() + ", Moves = " + getCounter();
+        // TODO V2: changed the status so that it shows the phase, the current player, and the current register -- done
+        return "Phase = " + getPhase() + ", Player = " + getCurrentPlayer().getName() + ", Moves = " + getCounter() +
+                ", Register = " + getStep() + " Checkpoints = " + getCurrentPlayer().getCheckpointsReached();
     }
 
     public int getCounter() {

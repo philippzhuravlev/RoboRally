@@ -10,7 +10,6 @@ import java.util.List;
  *
  * @author Ekkart Kindler, ekki@dtu.dk
  */
-// XXX A3: might be used for creating a first slightly more interesting board.
 public class BoardFactory {
 
     // BOARD NAMES
@@ -45,67 +44,154 @@ public class BoardFactory {
     }
 
     /**
-     * Creates a new board of given name of a board, which indicates
-     * which type of board should be created. For now the name is ignored.
+     * Creates a new game board based on the specified board name.
+     * The board name determines the type and layout of the board,
+     * including obstacles, conveyor belts, walls, and checkpoints.
      *
-     * @param name the given name board
-     * @return the new board corresponding to that name
+     * <p>If the name is {@code null}, a default 8x8 board is created.</p>
+     *
+     * <p>Available board options:</p>
+     * <ul>
+     *     <li>{@code SIMPLE_BOARD_NAME} - An 8x8 board with a basic layout of conveyor belts, walls, and checkpoints.</li>
+     *     <li>{@code ADVANCED_BOARD_NAME} - A 15x8 board with additional obstacles, complex conveyor belt paths, and multiple checkpoints.</li>
+     *     <li>Any other name - Creates an empty 8x8 board.</li>
+     * </ul>
+     *
+     * @param name the name of the board type to create
+     * @return the generated {@link Board} instance corresponding to the given name
      */
     public Board createBoard(String name) {
         Board board;
         if (name == null) {
-            board = new Board(8,8, DEFAULT_NAME);
+            board = new Board(8, 8, DEFAULT_NAME);
         } else {
-            board = new Board(8,8, name);
-            
             if (name.equals(SIMPLE_BOARD_NAME)) {
-                // No obstacles for now
-            } else if (name.equals(ADVANCED_BOARD_NAME)) {
-
-                // Obstacles
-                Space space = board.getSpace(0,0);
-                space.getWalls().add(Heading.SOUTH);
-                ConveyorBelt action = new ConveyorBelt();
-                action.setHeading(Heading.WEST);
-                space.getActions().add(action);
-
-                space = board.getSpace(1,0);
-                space.getWalls().add(Heading.NORTH);
-                action = new ConveyorBelt();
-                action.setHeading(Heading.WEST);
-                space.getActions().add(action);
+                board = new Board(8, 8, name);
                 
-                space = board.getSpace(1,1);
-                space.getWalls().add(Heading.WEST);
-                action = new ConveyorBelt();
-                action.setHeading(Heading.NORTH);
-                space.getActions().add(action);
+                // CONVEYOR BELTS
+                for (int y = 2; y <= 5; y++) { // Left
+                    addConveyorBelt(board, 0, y, Heading.SOUTH);
+                }
+                for (int y = 2; y <= 5; y++) { // Right
+                    addConveyorBelt(board, 7, y, Heading.NORTH);
+                }
+                for (int x = 2; x <= 5; x++) { // Top
+                    addConveyorBelt(board, x, 0, Heading.WEST);
+                }
+                for (int x = 2; x <= 5; x++) { // Bottom
+                    addConveyorBelt(board, x, 7, Heading.EAST);
+                }
+                
+                // WALLS
+                addWalls(board, 2, 2, Heading.SOUTH, Heading.EAST);
+                addWalls(board, 2, 5, Heading.NORTH, Heading.EAST);
+                addWalls(board, 5, 2, Heading.WEST, Heading.SOUTH);
+                addWalls(board, 5, 5, Heading.NORTH, Heading.WEST);
 
-                space = board.getSpace(5,5);
-                space.getWalls().add(Heading.SOUTH);
-                action = new ConveyorBelt();
-                action.setHeading(Heading.WEST);
-                space.getActions().add(action);
+                // CHECKPOINTS 
+                addCheckpoints(board, 1, 6, 1, false);
+                addCheckpoints(board, 6, 6, 2, false);
+                addCheckpoints(board, 6, 1, 3, true);
 
-                space = board.getSpace(6,5);
-                action = new ConveyorBelt();
-                action.setHeading(Heading.WEST);
-                space.getActions().add(action);
+            } else if (name.equals(ADVANCED_BOARD_NAME)) {
+                board = new Board(15, 8, name);
+                Space space;
 
-                // Checkpoints
-                space = board.getSpace(4,0);
+                // Walls (More obstacles across the board)
+                addWalls(board, 3, 0, Heading.SOUTH);
+                addWalls(board, 0, 1, Heading.NORTH);
+                addWalls(board, 4, 3, Heading.WEST);
+                addWalls(board, 9, 2, Heading.WEST);
+                addWalls(board, 6, 6, Heading.NORTH);
+                addWalls(board, 2, 5, Heading.EAST);
+                addWalls(board, 7, 2, Heading.SOUTH);
+                addWalls(board, 8, 4, Heading.WEST);
+                addWalls(board, 10, 6, Heading.NORTH);
+                addWalls(board, 12, 3, Heading.SOUTH);
+
+                // Conveyor Belts (Rearranged to avoid specified positions)
+                addConveyorBelt(board, 0, 6, Heading.NORTH);
+                addConveyorBelt(board, 0, 5, Heading.NORTH);
+                addConveyorBelt(board, 4, 5, Heading.EAST);
+                addConveyorBelt(board, 3, 4, Heading.EAST);
+                addConveyorBelt(board, 9, 3, Heading.NORTH);
+                addConveyorBelt(board, 9, 4, Heading.NORTH);
+                addConveyorBelt(board, 11, 6, Heading.WEST);
+                addConveyorBelt(board, 13, 2, Heading.SOUTH);
+                addConveyorBelt(board, 13, 3, Heading.SOUTH);
+                addConveyorBelt(board, 13, 4, Heading.SOUTH);
+                addConveyorBelt(board, 13, 5, Heading.SOUTH);
+                addConveyorBelt(board, 13, 6, Heading.SOUTH);
+
+                // Checkpoints (Rearranged to avoid specified positions)
+                space = board.getSpace(9, 2);
                 space.getActions().add(new CheckPoint(1, false));
+
+                space = board.getSpace(5, 3);
+                space.getActions().add(new CheckPoint(2, false));
+
+                space = board.getSpace(7, 6);
+                space.getActions().add(new CheckPoint(3, false));
+
+                space = board.getSpace(13, 7);
+                space.getActions().add(new CheckPoint(4, true));
+
+            } else {
+                board = new Board(8, 8, name);
             }
         }
         return board;
     }
 
     /**
-     * returns list of board names in the form of a list of string 
+     * Returns a list of board names in the form of a list of string
      * @return an unmodifiable list of available board names
      */
     public static List<String> getAvailableBoardNames() {
         return boardNames;
+    }
+
+    /**
+     * Adds a conveyor belt to the specified space on the board.
+     *
+     * @param board   the game board
+     * @param x       the x-coordinate of the space
+     * @param y       the y-coordinate of the space
+     * @param heading the direction the conveyor belt moves
+     */
+    private void addConveyorBelt(Board board, int x, int y, Heading heading) {
+        Space space = board.getSpace(x, y);
+        ConveyorBelt action = new ConveyorBelt();
+        action.setHeading(heading);
+        space.getActions().add(action);}
+
+    /**
+     * Adds walls to a specific space on the board in the given directions.
+     *
+     * @param board    the game board
+     * @param x        the x-coordinate of the space
+     * @param y        the y-coordinate of the space
+     * @param headings the directions in which walls should be placed
+     */
+    private void addWalls(Board board, int x, int y, Heading... headings) {
+        Space space = board.getSpace(x, y);
+        for (Heading heading : headings) {
+            space.getWalls().add(heading);
+        }
+    }
+
+    /**
+     * Places a checkpoint on the specified space of the board.
+     *
+     * @param board            the game board
+     * @param x                the x-coordinate of the space
+     * @param y                the y-coordinate of the space
+     * @param checkpointNumber the number assigned to the checkpoint
+     * @param isFinalCheckpoint whether this is the final checkpoint
+     */
+    private void addCheckpoints(Board board, int x, int y, int checkpointNumber, boolean isFinalCheckpoint) {
+        Space space = board.getSpace(x, y);
+        space.getActions().add(new CheckPoint(checkpointNumber, isFinalCheckpoint));
     }
 
 }

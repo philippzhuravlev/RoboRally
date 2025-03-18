@@ -1,8 +1,8 @@
 package dk.dtu.compute.se.pisd.roborally.controller;
 
+import dk.dtu.compute.se.pisd.roborally.model.Phase;
+import dk.dtu.compute.se.pisd.roborally.model.Player;
 import dk.dtu.compute.se.pisd.roborally.model.Space;
-import javafx.application.Platform;
-import javafx.scene.control.Alert;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -12,37 +12,48 @@ import org.jetbrains.annotations.NotNull;
 public class CheckPoint extends FieldAction {
     
     private int number;
-    private boolean isLast; // true if this is the last checkpoint
+    private boolean isLast; // usually checkpoint nr 3 or 4
 
     public CheckPoint(int number, boolean isLast) {
         this.number = number;
         this.isLast = isLast;
     }
 
+    /**
+     * Executes the checkpoint action when a player lands on this space.
+     *
+     * <p>If the player reaches this checkpoint in the correct order
+     * (i.e., either it is the first checkpoint or they have already
+     * reached the previous one), their checkpoint count increases.</p>
+     *
+     * <p>If this checkpoint is the final one, the game ends,
+     * and the winner is determined.</p>
+     *
+     * @param gameController the game controller managing the game logic
+     * @param space the space where the checkpoint action occurs
+     * @return {@code true} if the player successfully reaches this checkpoint, {@code false} otherwise
+     */
     @Override
     public boolean doAction(@NotNull GameController gameController, @NotNull Space space) {
         if (space.getPlayer() != null) {
-            // VICTORY DIALOG
-            if (isLast) { // i.e. if true
-                Platform.runLater(() -> { // i.e. run javaFX code
-                    Alert alert = new Alert(Alert.AlertType.INFORMATION); // alert dialog box like in AppController.java
-                    alert.setTitle("Victory!");
-                    alert.setHeaderText("You Won!");
-                    alert.setContentText("Player " + space.getPlayer().getName() + " has emerged victorious!");
-                    alert.showAndWait();
-                });
+            Player player = space.getPlayer();
+            if (number == 1 || player.hasReachedCheckpoint(number - 1)) {
+                if (!player.hasReachedCheckpoint(number)) {
+                    player.setCheckpointsReached(player.getCheckpointsReached() + 1);
+                    // VICTORY DIALOG
+                    if (isLast) {
+                        gameController.board.setPhase(Phase.FINISHED);
+                        gameController.handleGameEnd(player);
+                    }
+                }
+                return true;
             }
-            return true;
         }
         return false;
     }
 
-    // getters
     public int getNumber() {
         return number;
     }
 
-    public boolean getIsLast() {
-        return isLast;
-    }
 } 

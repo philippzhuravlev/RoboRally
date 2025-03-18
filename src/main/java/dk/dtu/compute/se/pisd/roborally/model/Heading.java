@@ -22,10 +22,14 @@
 package dk.dtu.compute.se.pisd.roborally.model;
 
 /**
- * Represents the four possible headings of a robot as directionals,
- * i.e. south, west, north, and east. The next() and prev() methods
- * are used to determine the next or previous heading, respectively.
- */
+ * Represents the four possible headings (directions) of a robot:
+ * {@code SOUTH}, {@code WEST}, {@code NORTH}, and {@code EAST}.
+ * The methods {@code next()} and {@code prev()} allow for
+ * cyclic navigation through the headings in clockwise and
+ * counterclockwise directions, respectively.
+ * The {@code opposite()} method returns the heading that is
+ * directly opposite to the current heading.
+*/
 public enum Heading {
 
     SOUTH, WEST, NORTH, EAST;
@@ -36,5 +40,15 @@ public enum Heading {
 
     public Heading prev() {
         return values()[(this.ordinal() + values().length - 1) % values().length];
+    }
+
+    public Heading opposite() {
+        return switch (this) {
+            case NORTH -> SOUTH;
+            case SOUTH -> NORTH;
+            case EAST -> WEST;
+            case WEST -> EAST;
+            default -> throw new IllegalStateException("Unexpected value: " + this);
+        };
     }
 }
