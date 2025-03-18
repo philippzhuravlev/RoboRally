@@ -145,8 +145,7 @@ class GameControllerTest {
     void testUTurn() {
         Board board = gameController.board;
         Player player = board.getCurrentPlayer();
-        gameController.turnRight(player);
-        gameController.turnRight(player);
+        gameController.turnU(player);
         assertEquals(Heading.NORTH, player.getHeading(), "Player should have turned around to face NORTH");
     }
 
@@ -366,6 +365,21 @@ class GameControllerTest {
     }
 
     @Test
+    void testExecuteNextStepWaitsForPlayerInteraction() {
+        Board board = gameController.board;
+        Player player = board.getCurrentPlayer();
+        CommandCard commandCard = new CommandCard(Command.LEFT_OR_RIGHT);
+
+        player.getProgramField(0).setCard(commandCard);
+        board.setStep(0);
+        board.setPhase(Phase.ACTIVATION);
+
+        gameController.executeNextStep(null); // No interactive input
+
+        assertEquals(Phase.PLAYER_INTERACTION, board.getPhase(), "Game should enter PLAYER_INTERACTION phase.");
+    }
+
+    @Test
     void testPlayersCannotShareSpace() {
         Board board = gameController.board;
         Player player1 = board.getPlayer(0);
@@ -460,6 +474,48 @@ class GameControllerTest {
 
         assertNotEquals(firstPlayer, nextPlayer, "Game should switch to the next player");
     }
+
+    @Test
+    void testProceedToNextPlayerResetsAfterLastPlayer() {
+        Board board = gameController.board;
+        int lastPlayerIndex = board.getPlayersNumber() - 1;
+        board.setCurrentPlayer(board.getPlayer(lastPlayerIndex));
+
+        gameController.proceedToNextPlayer();
+
+        assertEquals(board.getPlayer(0), board.getCurrentPlayer(), "After the last player, game should reset to first player.");
+    }
+
+    @Test
+    void testProceedToNextPlayerTriggersProgrammingPhaseAfterFinalStep() {
+        Board board = gameController.board;
+        board.setStep(Player.NO_REGISTERS - 1); // Set to last step
+        board.setCurrentPlayer(board.getPlayer(board.getPlayersNumber() - 1)); // Last player
+
+        gameController.proceedToNextPlayer();
+
+        assertEquals(Phase.PROGRAMMING, board.getPhase(), "After all steps, the game should restart the programming phase.");
+    }
+
+    @Test
+    void testExecuteNextStepActivatesNextCommand() {
+        Board board = gameController.board;
+        Player player = board.getCurrentPlayer();
+        CommandCard commandCard = new CommandCard(Command.FORWARD);
+
+        // Assign a command to the first step
+        player.getProgramField(0).setCard(commandCard);
+        board.setStep(0);
+        board.setPhase(Phase.ACTIVATION);
+
+        // Execute steps for each player in the round
+        for (int i = 0; i < board.getPlayersNumber(); i++) {
+            gameController.executeNextStep(null);
+        }
+
+        assertEquals(1, board.getStep(), "Game should move to the next step after all players have played.");
+    }
+
 
     // BOARD CREATION TESTS
 
