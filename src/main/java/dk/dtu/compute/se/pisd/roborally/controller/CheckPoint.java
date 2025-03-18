@@ -44,8 +44,8 @@ public class CheckPoint extends FieldAction {
                     player.setCheckpointsReached(player.getCheckpointsReached() + 1);
                     // VICTORY DIALOG
                     if (isLast) {
-                        gameController.board.setPhase(Phase.FINISHED);
                         gameController.handleGameEnd(player);
+                        gameController.board.setPhase(Phase.FINISHED);
                     }
                 }
                 return true;
@@ -57,5 +57,4 @@ public class CheckPoint extends FieldAction {
     public int getNumber() {
         return number;
     }
-
 } 

@@ -199,7 +199,7 @@ public class GameController {
      * @param interactiveCommand an optional interactive command issued by the player,
      *                           or {@code null} if no interaction is provided
      */
-    private void executeNextStep(Command interactiveCommand) {
+    void executeNextStep(Command interactiveCommand) {
         // Get the current player from the board
         Player currentPlayer = board.getCurrentPlayer();
 
@@ -498,7 +498,7 @@ public class GameController {
         executeNextStep(interactiveCommand);
     }
 
-    private void proceedToNextPlayer() {
+    void proceedToNextPlayer() {
         // Move to the next player
         int nextPlayerNumber = board.getPlayerNumber(board.getCurrentPlayer()) + 1;
         if (nextPlayerNumber < board.getPlayersNumber()) {
