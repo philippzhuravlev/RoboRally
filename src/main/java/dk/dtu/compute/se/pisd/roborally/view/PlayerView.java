@@ -140,6 +140,15 @@ public class PlayerView extends Tab implements ViewObserver {
         }
     }
 
+    /**
+     * Updates the view based on changes in the player's board state.
+     *
+     * <p>This method ensures that the UI elements reflect the current game phase and player actions.
+     * It updates the card field views with appropriate borders based on the phase and step.
+     * Additionally, it manages the visibility of control buttons depending on the game phase.</p>
+     *
+     * @param subject The observable subject that triggered the update (expected to be the player's board).
+     */
     @Override
     public void updateView(Subject subject) {
         if (subject == player.board) {

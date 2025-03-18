@@ -179,7 +179,7 @@ public class GameController {
      * @param interactiveCommand an optional interactive command issued by the player,
      *                           or {@code null} if no interaction is provided
      */
-    private void executeNextStep(Command interactiveCommand) {
+    public void executeNextStep(Command interactiveCommand) {
         Player currentPlayer = board.getCurrentPlayer();
         // ACTIVATION PHASE -> executes next step for player
         if (board.getPhase() == Phase.ACTIVATION && currentPlayer != null) {
@@ -459,7 +459,7 @@ public class GameController {
      * This method updates the current player to the next player in the sequence.
      * If all players have executed their commands, it triggers the execution of field actions.
      */
-    private void proceedToNextPlayer() {
+    public void proceedToNextPlayer() {
         int nextPlayerNumber = board.getPlayerNumber(board.getCurrentPlayer()) + 1; // i.e. find next player
         if (nextPlayerNumber < board.getPlayersNumber()) { // Move to the next player
             board.setCurrentPlayer(board.getPlayer(nextPlayerNumber));
