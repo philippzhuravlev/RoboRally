@@ -66,27 +66,16 @@ We changed `getNeighbour` in the `Board` class to handle walls. Then, the GUI bu
 
 Now we had to do field actions, though we had already done most of the checkpoint logic work, but it wasn't finished. We had to add associated player values for [amount of] `checkpointsReached` and the `lastCheckpoint` to make sure that players won after visiting all checkpoints, until the last. Lastly, we changed the GUI to display these debug-like messages
 
-
-
-
-
 ### Assignment 4e: Winning the Game and Interactive Command Cards
 
-We implemented the winning condition by enhancing the `CheckPoint` class to track the last checkpoint. When a player reaches all checkpoints in order, they win the game. The game transitions to `Phase.FINISHED`, and the winner is displayed in the status message.
+We improved the game by adding a winning condition. Now, when a player reaches all checkpoints in order, they win, and the game transitions to `Phase.FINISHED`. A victory pop-up appears, announcing the winner and showing game stats, like the number of steps the player needed to win.
 
-A victory pop-up window shows the winner and game statistics. We also implemented the interactive "LEFT_OR_RIGHT" command card that allows players to choose their turning direction during execution.
+We also made the LEFT_OR_RIGHT command card interactive, letting players choose whether to turn left or right during execution.
 
-For interactive cards, we:
-1. Added the command to the `Command` enum
-2. Modified `executeNextStep()` to change to `Phase.PLAYER_INTERACTION` when needed
-3. Implemented parameter passing for user choices
-4. Updated `PlayerView.updateView()` to show appropriate buttons during interaction
+To make this work, we:
+1. Added the new command to the Command enum.
+2. Modified `executeNextStep()` to change to `Phase.PLAYER_INTERACTION` when needed.
+3. Enabled parameter passing so players can make their choice.
+4. Modified PlayerView.updateView() to display the correct buttons for interaction.
 
-When a player makes a choice, the game returns to `Phase.ACTIVATION` and continues execution.
-
-#### Extras
-We added game enhancements:
-- Victory animations
-- Sound effects
-- Game timer
-- Player statistics tracking
+Once the player chooses, the game continues as usual, returning to `Phase.ACTIVATION` and executing the next step.
