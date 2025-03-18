@@ -1,81 +1,106 @@
 # RoboRally
+# System Requirements for Java Console Game
 
-## Github Repository
-https://github.com/philippzhuravlev/RoboRally
-
-
-## System Requirements
-
-### Minimum Requirements
-- **OS**: Windows 7, macOS 10.10, or Linux (Ubuntu 16.04)
-- **Processor**: 1GHz single-core CPU
-- **Memory**: 512 MB RAM
-- **Graphics**: Integrated graphics (no specific CPU required)
-- **Storage**: 100 MB free space
-
-### Recommended Requirements
+## Minimum Requirements
 - **OS**: Windows 10, macOS 10.15, or Linux (Ubuntu 20.04)
 - **Processor**: 1.5 GHz dual-core CPU
-- **Memory**: 1 GB RAM
+- **Memory**: 2 GB RAM
+- **Graphics**: Integrated graphics (no specific CPU required)
+- **Storage**: 200 MB free space
+- **Java**: JDK 21.1.0
+
+## Recommended Requirements
+- **OS**: Windows 10, macOS 11, or Linux (Ubuntu 22.04)
+- **Processor**: 2 GHz dual-core CPU
+- **Memory**: 4 GB RAM
 - **Graphics**: Integrated graphics (no specific GPU required)
-- **Storage**: 100 MB free space
+- **Storage**: 200 MB free space
+- **Java**: JDK 21.1.0
 
-## Project Structure
-```
-src/
-├── main/
-│   ├── java/
-│   │   ├── dk/dtu/compute/se/pisd/roborally/
-│   │   │   ├── controller/
-│   │   │   ├── model/
-│   │   │   ├── view/
-│   │   │   ├── fileaccess/
-│   │   │   ├── dal/
-│   │   │   ├── exceptions/
-│   │   │   ├── RoboRally.java
-│   │   │   └── StartRoboRally.java
-│   ├── resources/
-└── test/
-```
 
-## Assignments
+## Additional requirements depend on the method used to run the game:
+- **Running from IDE**: Ensure that your IDE supports Maven and JavaFX.
+- **Running from Command Line**:
+    - Maven must be installed and configured.
+    - Use the command `mvn clean install` to build the project.
+    - Use the command `mvn exec:java -Dexec.mainClass="dk.dtu.compute.se.pisd.roborally.StartRoboRally"` to run the game.
 
-### Assignment 4a: Player Movement and Move Counter
 
-We did player movement via mouse clicks by implementing the `moveCurrentPlayerToSpace` method in `GameController`. The method first verifies that the target space is unoccupied, then updates the player's position using `setSpace()`, and lastly advances to the next player's turn. The second part of the assignment was to add a move counter to the `Board` class to track the total number of moves in the game. This meant adding a `counter` attribute with `getCounter()` and `setCounter()` methods. The `setCounter()` method then calls `notifyChange()` to update the UI through the observer pattern. The last part was that the counter value is displayed in the status bar by modifying the `getStatusMessage()` method to include the counter in its output. 
+# RoboRally
 
-### Assignment 4b: Board Generation and Selection
+## Executing, Compiling, Installing and Running the Game
 
-In this part, we were to add board selection in the `BoardFactory` class. This first meant a simple getter called `getAvailableBoardNames()`. We looked at previous JavaFX dialog boxes and made a new one that allows you to choose between two board layouts, simple and advanced. They have different layouts of walls, conveyor belts, and checkpoints. The second part was to implement a `CheckPoint` class, itself an extension of `FieldAction`. We had actually drafted the checkpoint logic already by this time. The `updateView()` method in `SpaceView` was implemented to visually render walls, conveyor belts, and checkpoints on the board; they were drawn with simple JavaFX shapes we found, like triangles for conveyor belts; circles for checkpoints and red lines for walls.
+To run the game, follow these steps:
 
-### Assignment 4c: Command Cards and Program Execution
+1. **Clone the Repository**:
+    - Use the following Git command to clone the repository:
+      ```bash
+      git clone https://github.com/yourusername/roborally.git
+      ```
 
-We implemented the command card system by creating execution methods in `GameController`:
-- `moveForward` - uses recursion. Pushing only succeeds if all robots in the chain can move
-- `moveBackward` - 
-- `turnLeft` - utilizes pre-existing ENUMs and .next() m
-- `turnRight`
-- `U-Turn` - Rotates the robot 180°
-- `fastForward` - Moves the robot two spaces forward - this just calls moveForward twice.
-We changed `getNeighbour` in the `Board` class to handle walls. Then, the GUI buttons were connected to their corresponding actions:
-- "Finish Programming" → `finishProgrammingPhase`
-- "Execute Program" → `executePrograms`
-- "Execute Current Register" → `executeStep`
+2. **Open Project in IDE**:
+    - Launch your preferred IDE (e.g., IntelliJ IDEA).
+    - Open the cloned repository folder in the IDE.
 
-### Assignment 4d: Field Actions and Robot Pushing
+3. **Ensure Dependencies are Installed**:
+    - In the terminal, navigate to the project root and use Maven to download dependencies:
+      ```bash
+      mvn install
+      ```
 
-Now we had to do field actions, though we had already done most of the checkpoint logic work, but it wasn't finished. We had to add associated player values for [amount of] `checkpointsReached` and the `lastCheckpoint` to make sure that players won after visiting all checkpoints, until the last. Lastly, we changed the GUI to display these debug-like messages
+4. **Run the Game**:
+    - In your IDE, run the `dk.dtu.compute.se.pisd.roborally.StartRoboRally` class to start the game.
 
-### Assignment 4e: Winning the Game and Interactive Command Cards
+## Running Tests
 
-We improved the game by adding a winning condition. Now, when a player reaches all checkpoints in order, they win, and the game transitions to `Phase.FINISHED`. A victory pop-up appears, announcing the winner and showing game stats, like the number of steps the player needed to win.
+To run the tests for the project, follow these steps:
 
-We also made the LEFT_OR_RIGHT command card interactive, letting players choose whether to turn left or right during execution.
+1. **Ensure Dependencies are Installed**:
+    - In the terminal, navigate to the project root and use Maven to download dependencies:
+      ```bash
+      mvn install
+      ```
 
-To make this work, we:
-1. Added the new command to the Command enum.
-2. Modified `executeNextStep()` to change to `Phase.PLAYER_INTERACTION` when needed.
-3. Enabled parameter passing so players can make their choice.
-4. Modified PlayerView.updateView() to display the correct buttons for interaction.
+2. **Run Tests**:
+    - Use the following Maven command to run all test cases:
+      ```bash
+      mvn test
+      ```
 
-Once the player chooses, the game continues as usual, returning to `Phase.ACTIVATION` and executing the next step.
+This command will execute all test cases located in the `src/test/java` directory and provide a summary of the test results.
+
+## Class Descriptions
+
+### dk.dtu.compute.se.pisd.roborally.StartRoboRally
+This is the main class that starts the RoboRally game. It initializes the game environment and launches the game interface.
+
+### dk.dtu.compute.se.pisd.roborally.Game
+This class represents the game logic for RoboRally. It handles the game state, player actions, and game rules.
+
+### dk.dtu.compute.se.pisd.roborally.Board
+The `Board` class represents the game board. It manages the layout of the board, including the placement of tiles and obstacles.
+
+### dk.dtu.compute.se.pisd.roborally.Player
+This class represents a player in the game. It keeps track of the player's position, health, and actions.
+
+### dk.dtu.compute.se.pisd.roborally.Tile
+The `Tile` class represents a single tile on the game board. It can have different properties, such as being a conveyor belt or a pit.
+
+### dk.dtu.compute.se.pisd.roborally.Card
+This class represents a card in the game. Cards can be used by players to perform actions, such as moving or rotating.
+
+### dk.dtu.compute.se.pisd.roborally.Deck
+The `Deck` class manages a collection of cards. It handles shuffling and dealing cards to players.
+
+### dk.dtu.compute.se.pisd.roborally.Database
+This class handles database interactions for the game. It is used to save and load game states and player data.
+
+### dk.dtu.compute.se.pisd.roborally.GUI
+The `GUI` class manages the graphical user interface of the game. It handles rendering the game board and player interactions.
+
+### dk.dtu.compute.se.pisd.roborally.Controller
+This class acts as a controller in the MVC pattern. It handles user input and updates the game state accordingly.
+
+### dk.dtu.compute.se.pisd.roborally.Utils
+The `Utils` class contains utility functions that are used throughout the project. These functions perform common tasks that are needed in multiple places.
+
