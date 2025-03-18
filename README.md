@@ -51,7 +51,7 @@ In this part, we were to add board selection in the `BoardFactory` class. This f
 ### Assignment 4c: Command Cards and Program Execution
 
 We implemented the command card system by creating execution methods in `GameController`:
-- `moveForward` - uses recursion
+- `moveForward` - uses recursion. Pushing only succeeds if all robots in the chain can move
 - `moveBackward` - 
 - `turnLeft` - utilizes pre-existing ENUMs and .next() m
 - `turnRight`
@@ -64,20 +64,7 @@ We changed `getNeighbour` in the `Board` class to handle walls. Then, the GUI bu
 
 ### Assignment 4d: Field Actions and Robot Pushing
 
-We implemented robot pushing, allowing robots to push others when moving. This uses recursion and exception handling in the `moveToSpace` method, which throws `ImpossibleMoveException` when movement is blocked. The pushing only succeeds if all robots in the chain can move.
-
-Field actions are executed after all robots complete their commands for a register. For conveyor belts, robots are pushed in the belt's direction. For checkpoints, we added player tracking attributes:
-- `checkpointsReached` - Counts total checkpoints reached
-- `lastCheckpoint` - Records the highest checkpoint number reached
-
-The `CheckPoint` class increments a player's count only if they've already collected all lower-numbered checkpoints. Player progress is displayed in the UI through a status label and the game's status message.
-
-#### Extras
-We added additional field action types:
-- Rotating platforms
-- Repair stations
-- One-way gates
-
+Now we had to do field actions, though we had already done most of the checkpoint logic work, but it wasn't finished. We had to add associated player values for [amount of] `checkpointsReached` and the `lastCheckpoint` to make sure that players won after visiting all checkpoints, until the last. Lastly, we changed the GUI to display these debug-like messages
 
 
 
