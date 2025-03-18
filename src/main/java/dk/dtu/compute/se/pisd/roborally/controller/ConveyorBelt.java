@@ -37,7 +37,6 @@ public class ConveyorBelt extends FieldAction {
 
     private Heading heading;
 
-
     public Heading getHeading() {
         return heading;
     }
@@ -47,18 +46,18 @@ public class ConveyorBelt extends FieldAction {
     }
 
     /**
-     * Executes the conveyor belt action for the space.
+     * Executes the conveyor belt action for the given space.
      *
      * <p>If a player is on the conveyor belt, they are pushed one space in the
-     * belt's direction, provided there are no obstacles such as walls or the edge
-     * of the board blocking the movement.</p>
+     * belt's direction, provided that movement is not blocked by a wall or the
+     * edge of the board.</p>
      *
-     * <p>If movement is not possible due to a wall or an out-of-bounds situation,
-     * the player remains in place.</p>
+     * <p>If movement is not possible due to an obstacle, such as a wall or
+     * an out-of-bounds situation, the player remains in place.</p>
      *
-     * @param gameController the game controller managing the game logic
+     * @param gameController the game controller managing game logic
      * @param space the space where the conveyor belt action occurs
-     * @return {@code true} if the player was moved successfully; {@code false} otherwise
+     * @return {@code true} if the player was moved successfully, {@code false} otherwise
      */
     @Override
     public boolean doAction(@NotNull GameController gameController, @NotNull Space space) {
@@ -79,6 +78,4 @@ public class ConveyorBelt extends FieldAction {
         }
         return false; // No valid space to move into
     }
-
-
 }

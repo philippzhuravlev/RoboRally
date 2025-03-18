@@ -24,8 +24,6 @@ package dk.dtu.compute.se.pisd.roborally.controller;
 import dk.dtu.compute.se.pisd.roborally.exceptions.ImpossibleMoveException;
 import dk.dtu.compute.se.pisd.roborally.model.*;
 import dk.dtu.compute.se.pisd.roborally.view.BoardView;
-import javafx.application.Platform;
-import javafx.scene.control.Alert;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -47,11 +45,12 @@ public class GameController {
     }
 
     /**
-     * Moves the current player to the specified space if the space is unoccupied.
-     * Updates the current player to the next player in the sequence and increments
-     * the move counter.
+     * Moves the current player to the specified space if it is unoccupied.
      *
-     * @param space the space to which the current player should move
+     * <p>If the movement is successful, the game advances to the next player in the sequence,
+     * and the move counter is incremented.</p>
+     *
+     * @param space the destination space for the current player
      */
     public void moveCurrentPlayerToSpace(@NotNull Space space) {
         // TODO V1: method should be implemented by the students:
@@ -63,18 +62,18 @@ public class GameController {
         // if and when the player is moved (the counter and the status line
         // message needs to be implemented at another place) -- done
 
-        // moves player to space when clicked on; Probably should be replaced later!
-        Player currentPlayer = board.getCurrentPlayer(); // gets current space of a specific player
+        // Moves player to space when clicked on
+        Player currentPlayer = board.getCurrentPlayer();
 
-        if (space.getPlayer() == null) { // if getplayer returns null the space does not contain a player
-            currentPlayer.setSpace(space); // and if empty we set current player at this space
+        if (space.getPlayer() == null) { // If null, the space does not contain a player
+            currentPlayer.setSpace(space); // Set current player at this space
 
-            int currentPlayerNumber = board.getPlayerNumber(currentPlayer); // get current Player number
-            int nextPlayerNumber = (currentPlayerNumber + 1) % board.getPlayersNumber(); // move on to the next player
+            int currentPlayerNumber = board.getPlayerNumber(currentPlayer); // Get current Player number
+            int nextPlayerNumber = (currentPlayerNumber + 1) % board.getPlayersNumber(); // Move on to the next player
 
-            board.setCurrentPlayer(board.getPlayer(nextPlayerNumber)); // set current player as the "next player"
+            board.setCurrentPlayer(board.getPlayer(nextPlayerNumber)); // Set current player as the "next player"
 
-            board.setCounter(board.getCounter() + 1); // Increment the counter when a move is made .
+            board.setCounter(board.getCounter() + 1);
         }
     }
 
@@ -161,17 +160,11 @@ public class GameController {
     /**
      * Executes all field actions for the current game state.
      *
-     * <p>
-     * This method processes any field actions (such as conveyor belts and
-     * checkpoints)
-     * for all players currently on the board. It iterates over all players,
-     * retrieves their
-     * current space, and triggers any field actions assigned to that space.
-     * </p>
+     * <p>This method processes field actions such as conveyor belts and checkpoints
+     * for all players on the board. It iterates through each player, retrieves their
+     * current space, and triggers any assigned field actions.</p>
      *
-     * <p>
-     * Each field action is executed by calling its `doAction()` method.
-     * </p>
+     * <p>Each field action is executed by calling its {@code doAction()} method.</p>
      */
     void executeFieldActions() {
         for (int i = 0; i < board.getPlayersNumber(); i++) {
@@ -192,18 +185,19 @@ public class GameController {
     /**
      * Executes the next step in the activation phase of the game.
      *
-     * <p>
-     * This method processes the next command card for the current player.
-     * After executing the command, it moves to the next player. When all players
+     * <p>This method processes the next command card for the current player.
+     * After executing the command, it moves to the next player. Once all players
      * have executed their commands for the current step, field actions (such as
-     * conveyor belts)
-     * are triggered. The game then progresses to the next step or restarts the
-     * programming phase.
-     * </p>
+     * conveyor belts) are triggered.</p>
      *
-     * <p>
-     * If the game reaches the last step, the programming phase starts again.
-     * </p>
+     * <p>The game then progresses to the next step or, if the last step is reached,
+     * restarts the programming phase.</p>
+     *
+     * <p>If a command requires player interaction and no input is provided,
+     * the game enters the player interaction phase until an action is taken.</p>
+     *
+     * @param interactiveCommand an optional interactive command issued by the player,
+     *                           or {@code null} if no interaction is provided
      */
     private void executeNextStep(Command interactiveCommand) {
         // Get the current player from the board

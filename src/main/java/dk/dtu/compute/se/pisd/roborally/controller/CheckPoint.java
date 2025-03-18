@@ -24,14 +24,16 @@ public class CheckPoint extends FieldAction {
     /**
      * Executes the checkpoint action when a player lands on this space.
      *
-     * <p>If the player reaches this checkpoint in the correct order (either it's the first checkpoint
-     * or they have reached the previous checkpoint), their checkpoint count is increased.</p>
+     * <p>If the player reaches this checkpoint in the correct order
+     * (i.e., either it is the first checkpoint or they have already
+     * reached the previous one), their checkpoint count increases.</p>
      *
-     * <p>If this checkpoint is the final one, a victory message is displayed.</p>
+     * <p>If this checkpoint is the final one, the game ends,
+     * and the winner is determined.</p>
      *
-     * @param gameController the game controller managing the game
+     * @param gameController the game controller managing the game logic
      * @param space the space where the checkpoint action occurs
-     * @return {@code true} if the checkpoint is successfully reached; {@code false} otherwise
+     * @return {@code true} if the player successfully reaches this checkpoint, {@code false} otherwise
      */
     @Override
     public boolean doAction(@NotNull GameController gameController, @NotNull Space space) {
@@ -52,12 +54,8 @@ public class CheckPoint extends FieldAction {
         return false;
     }
 
-    // getters
     public int getNumber() {
         return number;
     }
 
-    public boolean getIsLast() {
-        return isLast;
-    }
 } 

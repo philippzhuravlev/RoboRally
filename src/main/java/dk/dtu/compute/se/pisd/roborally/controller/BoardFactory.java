@@ -45,11 +45,21 @@ public class BoardFactory {
     }
 
     /**
-     * Creates a new board of given name of a board, which indicates
-     * which type of board should be created. For now the name is ignored.
+     * Creates a new game board based on the specified board name.
+     * The board name determines the type and layout of the board,
+     * including obstacles, conveyor belts, walls, and checkpoints.
      *
-     * @param name the given name board
-     * @return the new board corresponding to that name
+     * <p>If the name is {@code null}, a default 8x8 board is created.</p>
+     *
+     * <p>Available board options:</p>
+     * <ul>
+     *     <li>{@code SIMPLE_BOARD_NAME} - An 8x8 board with a basic layout of conveyor belts, walls, and checkpoints.</li>
+     *     <li>{@code ADVANCED_BOARD_NAME} - A 15x8 board with additional obstacles, complex conveyor belt paths, and multiple checkpoints.</li>
+     *     <li>Any other name - Creates an empty 8x8 board.</li>
+     * </ul>
+     *
+     * @param name the name of the board type to create
+     * @return the generated {@link Board} instance corresponding to the given name
      */
     public Board createBoard(String name) {
         Board board;
@@ -142,12 +152,28 @@ public class BoardFactory {
         return boardNames;
     }
 
+    /**
+     * Adds a conveyor belt to the specified space on the board.
+     *
+     * @param board   the game board
+     * @param x       the x-coordinate of the space
+     * @param y       the y-coordinate of the space
+     * @param heading the direction the conveyor belt moves
+     */
     private void addConveyorBelt(Board board, int x, int y, Heading heading) {
         Space space = board.getSpace(x, y);
         ConveyorBelt action = new ConveyorBelt();
         action.setHeading(heading);
         space.getActions().add(action);}
 
+    /**
+     * Adds walls to a specific space on the board in the given directions.
+     *
+     * @param board    the game board
+     * @param x        the x-coordinate of the space
+     * @param y        the y-coordinate of the space
+     * @param headings the directions in which walls should be placed
+     */
     private void addWalls(Board board, int x, int y, Heading... headings) {
         Space space = board.getSpace(x, y);
         for (Heading heading : headings) {
@@ -155,6 +181,15 @@ public class BoardFactory {
         }
     }
 
+    /**
+     * Places a checkpoint on the specified space of the board.
+     *
+     * @param board            the game board
+     * @param x                the x-coordinate of the space
+     * @param y                the y-coordinate of the space
+     * @param checkpointNumber the number assigned to the checkpoint
+     * @param isFinalCheckpoint whether this is the final checkpoint
+     */
     private void addCheckpoints(Board board, int x, int y, int checkpointNumber, boolean isFinalCheckpoint) {
         Space space = board.getSpace(x, y);
         space.getActions().add(new CheckPoint(checkpointNumber, isFinalCheckpoint));
