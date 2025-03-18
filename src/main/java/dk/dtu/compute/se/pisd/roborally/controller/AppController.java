@@ -44,10 +44,10 @@ import java.util.Optional;
  * to receive updates from observed subjects.
  * The application logic includes the reaction of new games, saving and loading,
  * stopping the current game, and exiting the application.
+ * 
  * @see Observer
  */
 public class AppController implements Observer {
-
     final private List<Integer> PLAYER_NUMBER_OPTIONS = Arrays.asList(2, 3, 4, 5, 6);
     final private List<String> PLAYER_COLORS = Arrays.asList("red", "green", "blue", "orange", "grey", "magenta");
 
@@ -67,29 +67,29 @@ public class AppController implements Observer {
         Optional<String> result = boardDialog.showAndWait();
 
         if (result.isPresent()) {
-            String selectedBoard = result.get(); // save selected board
+            String selectedBoard = result.get(); // saves selected board
             
             // NUMBER OF PLAYERS DIALOG
+            // According to MVC principle, this should be in the view, but 
+            // it's a part of the handout and not part of the assignment
             ChoiceDialog<Integer> numberOfPlayersDialog = new ChoiceDialog<>(PLAYER_NUMBER_OPTIONS.get(0), PLAYER_NUMBER_OPTIONS);
             numberOfPlayersDialog.setTitle("Player number");
             numberOfPlayersDialog.setHeaderText("Select number of players");
             Optional<Integer> numberOfPlayersResult = numberOfPlayersDialog.showAndWait();
 
-            int numberOfPlayers = numberOfPlayersResult.get(); // save number of players
+            int numberOfPlayers = numberOfPlayersResult.get(); // saves number of players
 
-            // Check if there is a game running
-            if (gameController != null) {
+            if (gameController != null) { // checks if game is running
                 if (!stopGame()) {
                     return;
                 }
             }
 
-            // Create board using the selected board type
+            // Create board
             Board board = BoardFactory.getInstance().createBoard(selectedBoard);
             gameController = new GameController(board);
 
-
-            // Add players to board
+            // Add players to board; this does it diagonally 
             for (int i = 0; i < numberOfPlayers; i++) {
                 Player player = new Player(board, PLAYER_COLORS.get(i), "Player " + (i + 1));
                 board.addPlayer(player);
@@ -105,11 +105,11 @@ public class AppController implements Observer {
     }
 
     public void saveGame() {
-        // TODO V4a: needs to be implemented
+        // Not part of assignment
     }
 
     public void loadGame() {
-        // TODO V4a: needs to be implemented
+        // Not part of assignment
         // for now, we just create a new game
         if (gameController == null) {
             newGame();
@@ -146,7 +146,7 @@ public class AppController implements Observer {
             Optional<ButtonType> result = alert.showAndWait();
 
             if (!result.isPresent() || result.get() != ButtonType.OK) {
-                return; // return without exiting the application
+                return; // stop without exiting the application
             }
         }
 

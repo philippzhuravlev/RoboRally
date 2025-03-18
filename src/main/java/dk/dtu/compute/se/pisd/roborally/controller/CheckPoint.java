@@ -3,8 +3,6 @@ package dk.dtu.compute.se.pisd.roborally.controller;
 import dk.dtu.compute.se.pisd.roborally.model.Phase;
 import dk.dtu.compute.se.pisd.roborally.model.Player;
 import dk.dtu.compute.se.pisd.roborally.model.Space;
-import javafx.application.Platform;
-import javafx.scene.control.Alert;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -14,7 +12,7 @@ import org.jetbrains.annotations.NotNull;
 public class CheckPoint extends FieldAction {
     
     private int number;
-    private boolean isLast; // true if this is the last checkpoint
+    private boolean isLast; // usually checkpoint nr 3 or 4
 
     public CheckPoint(int number, boolean isLast) {
         this.number = number;
